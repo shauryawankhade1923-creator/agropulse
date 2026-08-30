@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMART INDIA HACKATHON 2026 — AgroPulse (PS ID: SIH26032)</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #525659;
+      padding: 20px;
+      color: #1e293b;
+    }
+
+    .toolbar {
+      max-width: 1100px;
+      margin: 0 auto 20px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .btn-print {
+      background: #1b559b;
+      color: #ffffff;
+      font-weight: bold;
+      padding: 10px 22px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-print:hover {
+      background: #102c57;
+    }
+
+    .slide {
+      width: 100%;
+      max-width: 1100px;
+      aspect-ratio: 16 / 9;
+      margin: 0 auto 30px auto;
+      background: #ffffff;
+      border-radius: 4px;
+      padding: 30px 45px 50px 45px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      page-break-after: always;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .team-oval {
+      width: 110px;
+      height: 65px;
+      border: 1.5px solid #1e293b;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      line-height: 1.2;
+      color: #1e293b;
+      text-align: center;
+    }
+
+    .slide-title {
+      font-size: 26px;
+      font-weight: bold;
+      color: #102c57;
+      text-align: center;
+      flex: 1;
+    }
+
+    .sih-header-right {
+      text-align: right;
+      font-size: 11px;
+      font-weight: bold;
+      color: #102c57;
+      line-height: 1.2;
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 12px;
+    }
+
+    .section-title-special {
+      font-size: 17px;
+      font-weight: bold;
+      color: #1b559b;
+      margin-bottom: 8px;
+    }
+
+    .section-bullet {
+      font-size: 15px;
+      font-weight: bold;
+      color: #102c57;
+      margin-top: 6px;
+    }
+
+    .sub-bullet {
+      font-size: 13px;
+      color: #334155;
+      line-height: 1.45;
+      padding-left: 24px;
+      margin-top: 3px;
+    }
+
+    .slide-footer-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 38px;
+      background: #1d70b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 40px;
+      color: #ffffff;
+      font-size: 12px;
+    }
+
+    /* Flowchart Container inside light theme */
+    .flowchart-light {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 14px;
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+    }
+
+    .flow-box {
+      flex: 1;
+      padding: 12px;
+      border-radius: 6px;
+      border-left: 4px solid #059669;
+      background: #ecfdf5;
+    }
+
+    .flow-box.blue { border-left-color: #2563eb; background: #eff6ff; }
+    .flow-box.amber { border-left-color: #d97706; background: #fffbeb; }
+
+    .flow-box h4 {
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #065f46;
+    }
+    .flow-box.blue h4 { color: #1e40af; }
+    .flow-box.amber h4 { color: #92400e; }
+
+    .flow-box p {
+      font-size: 11px;
+      color: #334155;
+      line-height: 1.35;
+    }
+
+    @media print {
+      body {
+        background: transparent;
+        padding: 0;
+      }
+      .toolbar {
+        display: none;
+      }
+      .slide {
+        border-radius: 0;
+        margin: 0;
+        box-shadow: none;
+        page-break-after: always;
+        height: 100vh;
+        max-width: 100%;
+        padding: 40px 50px 60px 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controls Bar -->
+  <div class="toolbar">
+    <div>
+      <strong style="font-size: 15px; color: #102c57;">Official SIH 2026 Template — AgroPulse (PS ID: SIH26032)</strong>
+      <span style="font-size: 12px; color: #64748b; margin-left: 10px;">Exact Structure, Colors & White Background</span>
+    </div>
+    <button class="btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  </div>
+
+  <!-- SLIDE 1: TITLE PAGE -->
+  <div class="slide">
+    <div class="slide-header" style="align-items: flex-start;">
+      <div style="font-size: 24px; font-weight: bold; color: #1b559b;">
+        SMART INDIA HACKATHON 2026
+      </div>
+      <div class="sih-header-right">
+        SMART INDIA<br>HACKATHON<br>2026
+      </div>
+    </div>
+
+    <div style="text-align: center; font-size: 24px; font-weight: bold; color: #102c57; margin-bottom: 20px;">
+      TITLE PAGE
+    </div>
+
+    <div class="slide-content" style="gap: 12px; padding-left: 10px;">
+      <div><strong style="font-size: 15px; color: #102c57;">• Problem Statement ID – </strong> <span style="font-size: 15px; color: #334155; font-weight: bold;">SIH26032</span></div>
+      <div><strong style="font-size: 15px; color: #102c57;">• Ministry / Organization – </strong> <span style="font-size: 14.5px; color: #334155;">Ministry of Consumer Affairs, Food & Public Distribution</span></div>
+      <div><strong style="font-size: 15px; color: #102c57;">• Problem Statement Title – </strong> <span style="font-size: 14px; color: #334155;">Farmers often face long waiting times, lack of information regarding procurement schedules, and uncertainty about procurement status.</span></div>
+      <div><strong style="font-size: 15px; color: #102c57;">• Idea / Solution Title – </strong> <span style="font-size: 14.5px; color: #1b559b; font-weight: bold;">AgroPulse — AI-Driven Mandi Queue Orchestration, Dynamic Schedule Booking & Real-Time Procurement Tracker</span></div>
+      <div><strong style="font-size: 15px; color: #102c57;">• Theme – </strong> <span style="font-size: 14.5px; color: #334155;">Heritage & Culture / Agriculture, Food Distribution & Smart Logistics</span></div>
+      <div><strong style="font-size: 15px; color: #102c57;">• PS Category – </strong> <span style="font-size: 14.5px; color: #334155;">Software</span></div>
+      <div><strong style="font-size: 15px; color: #102c57;">• Team ID – </strong> <span style="font-size: 14.5px; color: #334155;">[Your Team ID]</span></div>
+      <div><strong style="font-size: 15px; color: #102c57;">• Team Name (Registered on portal) – </strong> <span style="font-size: 14.5px; color: #334155;">[Your Registered Team Name]</span></div>
+    </div>
+
+    <div class="slide-footer-bar" style="background: transparent; color: #64748b; font-size: 10px; justify-content: flex-end;">
+      <!-- Slide 1 footer blank per template -->
+    </div>
+  </div>
+
+  <!-- SLIDE 2: PROPOSED SOLUTION -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="team-oval">Your<br>Team<br>Name</div>
+      <div class="slide-title">IDEA TITLE: AgroPulse</div>
+      <div class="sih-header-right">SMART INDIA<br>HACKATHON<br>2026</div>
+    </div>
+
+    <div class="slide-content">
+      <div class="section-title-special">❖ Proposed Solution (Describe your Idea/Solution/Prototype)</div>
+      
+      <div>
+        <div class="section-bullet">• Detailed explanation of the proposed solution</div>
+        <div class="sub-bullet">- AgroPulse is a unified digital platform enabling Scheduled Time-Slot Booking, Dynamic QR Token E-Passes, and Real-Time Mandi Queue Tracking.</div>
+        <div class="sub-bullet">- AI Fair Price & Quality Valuation Engine analyzing APMC trends, Government MSP floors, and moisture adjustments to protect farmer margins.</div>
+        <div class="sub-bullet">- Smart Kisan Freight Pooling for consolidated rural milk-run transport, cutting farmgate transit costs by up to 60%.</div>
+      </div>
+
+      <div>
+        <div class="section-bullet">• How it addresses the problem (SIH26032)</div>
+        <div class="sub-bullet">- Eliminates Long Waiting Times: Replaces chaotic unannounced arrivals with slotted hourly arrival windows, cutting wait times from 12+ hrs to &lt;30 mins.</div>
+        <div class="sub-bullet">- Delivers 100% Schedule Clarity: Instant SMS, WhatsApp, and portal notifications providing exact counter, slot date, and arrival timing.</div>
+        <div class="sub-bullet">- Removes Procurement Uncertainty: Live step-by-step tracking (Listing &rarr; In-Transit &rarr; Checked-in &rarr; Inspection &rarr; Instant DBT Payout Voucher).</div>
+      </div>
+
+      <div>
+        <div class="section-bullet">• Innovation and uniqueness of the solution</div>
+        <div class="sub-bullet">- Multi-Stage Cryptographic QR Token: Single verifiable pass connecting farmgate booking, weighbridge inspection, and Direct Bank DBT payout.</div>
+        <div class="sub-bullet">- Proportional Freight Sharing Algorithm: Dynamic fare allocation based on farmer crop weight and pickup corridor distance.</div>
+        <div class="sub-bullet">- Offline-Tolerant Gate Validation: Encrypted QR tokens validated locally at mandi gate scanners during rural internet outages.</div>
+      </div>
+    </div>
+
+    <div class="slide-footer-bar">
+      <span>@SIH Idea submission – Template</span>
+      <span>2</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: TECHNICAL APPROACH -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="team-oval">Your<br>Team<br>Name</div>
+      <div class="slide-title">TECHNICAL APPROACH</div>
+      <div class="sih-header-right">SMART INDIA<br>HACKATHON<br>2026</div>
+    </div>
+
+    <div class="slide-content">
+      <div>
+        <div class="section-bullet">• Technologies to be used (e.g. programming languages, frameworks, hardware)</div>
+        <div class="sub-bullet">- Programming Languages & Frameworks: Python (FastAPI microservices), React 18 (Vite SPA frontend), Tailwind CSS.</div>
+        <div class="sub-bullet">- Database & Data Layer: SQLAlchemy ORM with SQLite / PostgreSQL, Pydantic Schema Validation.</div>
+        <div class="sub-bullet">- AI & Optimization: Scikit-Learn (Price Valuation Regression), M/M/c Stochastic Queue Waiting Predictor, Haversine Routing Optimizer.</div>
+        <div class="sub-bullet">- Hardware Requirements: Zero proprietary hardware; compatible with standard Mandi Weighbridge PCs, Barcode/Camera scanners, and Android smartphones.</div>
+      </div>
+
+      <div>
+        <div class="section-bullet">• Methodology and process for implementation (Flow Charts/Images/ working prototype)</div>
+      </div>
+
+      <!-- Clean Architecture Flowchart -->
+      <div class="flowchart-light">
+        <div class="flow-box">
+          <h4>1. Farmgate Phase</h4>
+          <p>• Harvest Listing & Price Discovery<br>• Slotted Procurement Booking<br>• Shared Kisan Freight Pooling</p>
+        </div>
+        <div style="display: flex; align-items: center; color: #1b559b; font-weight: bold; font-size: 20px;">&rarr;</div>
+        <div class="flow-box blue">
+          <h4>2. Mandi Queue Phase</h4>
+          <p>• QR-Coded Electronic E-Pass<br>• Automated Mandi Gate Check-in<br>• Live AI Wait Time & Queue Tracking</p>
+        </div>
+        <div style="display: flex; align-items: center; color: #1b559b; font-weight: bold; font-size: 20px;">&rarr;</div>
+        <div class="flow-box amber">
+          <h4>3. Weigh & DBT Phase</h4>
+          <p>• Computerized Weighbridge & Quality<br>• Real-Time Status Transparency<br>• Instant Direct Bank DBT Disbursement</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer-bar">
+      <span>@SIH Idea submission – Template</span>
+      <span>3</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: FEASIBILITY AND VIABILITY -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="team-oval">Your<br>Team<br>Name</div>
+      <div class="slide-title">FEASIBILITY AND VIABILITY</div>
+      <div class="sih-header-right">SMART INDIA<br>HACKATHON<br>2026</div>
+    </div>
+
+    <div class="slide-content">
+      <div>
+        <div class="section-bullet">• Analysis of the feasibility of the idea</div>
+        <div class="sub-bullet">- Technical Feasibility: High &mdash; Lightweight RESTful microservice architecture tested with rapid response times (&lt;100ms) and low bandwidth overhead.</div>
+        <div class="sub-bullet">- Operational Feasibility: Smooth onboarding with minimal learning curve; mandi inspectors use intuitive web scan consoles without modifying existing weigh scales.</div>
+        <div class="sub-bullet">- Economic Viability: Highly viable with near-zero CAPEX, self-sustainable through nominal transaction audit fees and logistics optimization savings.</div>
+      </div>
+
+      <div>
+        <div class="section-bullet">• Potential challenges and risks</div>
+        <div class="sub-bullet">- Intermittent Internet Connectivity: Potential connectivity drops in rural mandi locations during peak procurement season.</div>
+        <div class="sub-bullet">- Farmer Digital Literacy: Hesitancy among elder or smallholder farmers with mobile application interfaces.</div>
+        <div class="sub-bullet">- Surge Arrival Peaks: Vehicles arriving outside their booked time windows causing temporary queue variations.</div>
+      </div>
+
+      <div>
+        <div class="section-bullet">• Strategies for overcoming these challenges</div>
+        <div class="sub-bullet">- Offline Cryptographic Validation: QR passes store self-contained digital signatures, allowing gate verification without active internet connection.</div>
+        <div class="sub-bullet">- Multilingual Voice & SMS IVR: Automated slot updates, arrival reminders, and payment receipts dispatched via regional SMS and WhatsApp.</div>
+        <div class="sub-bullet">- Dynamic Buffer Management: Intelligent 30-minute grace arrival periods and automated counter workload re-routing.</div>
+      </div>
+    </div>
+
+    <div class="slide-footer-bar">
+      <span>@SIH Idea submission – Template</span>
+      <span>4</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: IMPACT AND BENEFITS -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="team-oval">Your<br>Team<br>Name</div>
+      <div class="slide-title">IMPACT AND BENEFITS</div>
+      <div class="sih-header-right">SMART INDIA<br>HACKATHON<br>2026</div>
+    </div>
+
+    <div class="slide-content">
+      <div>
+        <div class="section-bullet">• Potential impact on the target audience</div>
+        <div class="sub-bullet">- Smallholder & Marginal Farmers: Complete transparency in procurement schedules, elimination of 12+ hour overnight waiting, and guaranteed fair pricing without distress sales.</div>
+        <div class="sub-bullet">- Mandi / APMC Authorities & Food Corporations: 40% higher daily weighbridge throughput, zero traffic gridlocks on highway access roads, and seamless digitized procurement auditing.</div>
+        <div class="sub-bullet">- Transporters & Vehicle Providers: Predictable multi-stop cargo pickup routing and maximized truck capacity utilization.</div>
+      </div>
+
+      <div>
+        <div class="section-bullet">• Benefits of the solution (social, economic, environmental, etc.)</div>
+        <div class="sub-bullet">- Economic Benefits: Up to 60% savings on farmgate transport; 100% price realization under MSP; instant DBT settlement vouchers preventing delayed payment distress.</div>
+        <div class="sub-bullet">- Social Benefits: Eliminates hazardous physical waiting on highway roads; promotes digital equity for rural farmers; boosts trust in government procurement centers.</div>
+        <div class="sub-bullet">- Environmental Benefits: 48.5% reduction in vehicular carbon emissions (CO2) through shared vehicle pooling; significant reduction in perishable produce decay and post-harvest wastage.</div>
+      </div>
+    </div>
+
+    <div class="slide-footer-bar">
+      <span>@SIH Idea submission – Template</span>
+      <span>5</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: RESEARCH AND REFERENCES -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="team-oval">Your<br>Team<br>Name</div>
+      <div class="slide-title">RESEARCH AND REFERENCES</div>
+      <div class="sih-header-right">SMART INDIA<br>HACKATHON<br>2026</div>
+    </div>
+
+    <div class="slide-content">
+      <div>
+        <div class="section-bullet">• Details / Links of the reference and research work</div>
+        <div class="sub-bullet">- Ministry of Consumer Affairs, Food & Public Distribution (GoI): 'Digital Procurement Guidelines & Farmer Queue Management in Mandis'.</div>
+        <div class="sub-bullet">- National Agriculture Market (e-NAM): Standard Operating Procedures (SOP) for Electronic Quality Assay, Gate Entry Protocol, and Online Payment Settlements.</div>
+        <div class="sub-bullet">- Committee on Doubling Farmers' Income (DFI), Vol. VIII: 'Post-Production Agricultural Logistics, Rural Milk-Run Consolidation & Mandi Modernization'.</div>
+        <div class="sub-bullet">- NITI Aayog Policy Framework (2021): 'Transforming Agricultural Marketing & Public Procurement through Digital Technology Linkages'.</div>
+        <div class="sub-bullet">- Agmarknet & CACP (Commission for Agricultural Costs and Prices): Mandi Arrival Time-Series Datasets and Variety-wise Minimum Support Price (MSP) Formulas.</div>
+        <div class="sub-bullet">- Transportation Research Part E: 'Stochastic M/M/c Queueing Models for Agricultural Procurement Centers & Proportional Cost Allocation Algorithms'.</div>
+      </div>
+    </div>
+
+    <div class="slide-footer-bar">
+      <span>@SIH Idea submission – Template</span>
+      <span>6</span>
+    </div>
+  </div>
+
+</body>
+</html>

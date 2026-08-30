@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+backend/venv/
+backend/.venv/
+venv/
+.venv/
+
+# Build artifacts
+frontend/dist/
+dist/
+build/
+*.pyc
+__pycache__/
+.pytest_cache/
+
+# Databases & local secrets
+*.sqlite3
+backend/agropulse.db
+agropulse.db
+
+# OS files
+.DS_Store
+Thumbs.db
+.env.local
+.vscode/
+.idea/
