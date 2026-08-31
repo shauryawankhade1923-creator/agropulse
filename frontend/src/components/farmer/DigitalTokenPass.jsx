@@ -164,8 +164,9 @@ export default function DigitalTokenPass() {
                               ? 'bg-rose-950 text-rose-400 border border-rose-900'
                               : 'bg-slate-950 text-slate-400 border border-slate-800')
                       }`}>
-                        {t.status.replace('_', ' ')}
+                        {(t.status || 'BOOKED').replace('_', ' ')}
                       </span>
+
                     </div>
 
                     <div className="text-xs font-medium text-slate-200">

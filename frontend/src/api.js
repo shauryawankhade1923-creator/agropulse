@@ -226,45 +226,96 @@ const DEFAULT_TOKENS = [
 const DEFAULT_LOGISTICS_POOLS = [
   {
     id: 1,
-    route_name: "Pimpalgaon -> Nashik Main APMC",
+    pool_code: "MH15-POOL-01",
+    route_name: "Pimpalgaon Baswant ➔ Dindori ➔ Nashik APMC",
+    route_summary: "Pimpalgaon Baswant ➔ Dindori ➔ Nashik APMC",
+    destination_mandi: "Nashik Main APMC Market Yard",
+    vehicle_type: "Tata 407 (3.5 Ton Multi-Axle)",
     truck_type: "Tata 407 (3.5 Ton Capacity)",
     driver_name: "Suresh Gaikwad",
     driver_phone: "+91 9822019283",
     vehicle_number: "MH-15-EG-4821",
     total_capacity_kg: 3500,
-    allocated_kg: 2500,
-    booked_capacity_kg: 2500,
-    available_capacity_kg: 1000,
-    available_kg: 1000,
+    allocated_kg: 2200,
+    booked_capacity_kg: 2200,
+    available_capacity_kg: 1300,
+    available_kg: 1300,
+    capacity_percentage: 63,
+    member_count: 3,
+    departure_time_window: "07:00 AM - 07:30 AM",
     departure_time: "07:30 AM Tomorrow",
-    rate_per_kg: 0.85,
+    departure_date: "Today, Morning",
+    rate_per_kg: 0.70,
     standard_individual_fare: 2800,
     solo_estimated_cost: 2800,
-    pooled_base_fare: 1750,
-    pooled_fare_estimate: 1750,
-    savings_percent: 37.5
+    pooled_base_fare: 1450,
+    pooled_fare_estimate: 1450,
+    savings_amount: 1350,
+    savings_percent: 48.2,
+    status: "OPEN"
   },
   {
     id: 2,
-    route_name: "Niphad Catchment -> Lasalgaon APMC",
-    truck_type: "Mahindra Bolero Pickup (1.8 Ton)",
+    pool_code: "MH15-POOL-02",
+    route_name: "Niphad Catchment ➔ Vinchur ➔ Lasalgaon APMC",
+    route_summary: "Niphad Catchment ➔ Vinchur ➔ Lasalgaon APMC",
+    destination_mandi: "Lasalgaon APMC (Onion Yard)",
+    vehicle_type: "Eicher Pro 10-Ton Heavy Hauler",
+    truck_type: "Eicher Pro 10-Ton",
     driver_name: "Kailash Patil",
     driver_phone: "+91 9890123456",
     vehicle_number: "MH-15-AZ-9912",
-    total_capacity_kg: 1800,
-    allocated_kg: 800,
-    booked_capacity_kg: 800,
+    total_capacity_kg: 10000,
+    allocated_kg: 6800,
+    booked_capacity_kg: 6800,
+    available_capacity_kg: 3200,
+    available_kg: 3200,
+    capacity_percentage: 68,
+    member_count: 5,
+    departure_time_window: "05:30 AM - 06:15 AM",
+    departure_time: "06:00 AM Tomorrow",
+    departure_date: "Today, Morning",
+    rate_per_kg: 0.55,
+    standard_individual_fare: 4500,
+    solo_estimated_cost: 4500,
+    pooled_base_fare: 2100,
+    pooled_fare_estimate: 2100,
+    savings_amount: 2400,
+    savings_percent: 53.3,
+    status: "OPEN"
+  },
+  {
+    id: 3,
+    pool_code: "MH15-POOL-03",
+    route_name: "Kalwan / Satana ➔ Chandwad ➔ Pimpalgaon APMC",
+    route_summary: "Kalwan / Satana ➔ Chandwad ➔ Pimpalgaon APMC",
+    destination_mandi: "Pimpalgaon APMC Market Yard",
+    vehicle_type: "Mahindra Bolero Maxi-Truck (2.5 Ton)",
+    truck_type: "Mahindra Bolero Maxi-Truck",
+    driver_name: "Ganesh More",
+    driver_phone: "+91 9765432190",
+    vehicle_number: "MH-15-DK-3341",
+    total_capacity_kg: 2500,
+    allocated_kg: 1500,
+    booked_capacity_kg: 1500,
     available_capacity_kg: 1000,
     available_kg: 1000,
-    departure_time: "06:00 AM Tomorrow",
-    rate_per_kg: 0.90,
-    standard_individual_fare: 1900,
-    solo_estimated_cost: 1900,
-    pooled_base_fare: 1200,
-    pooled_fare_estimate: 1200,
-    savings_percent: 36.8
+    capacity_percentage: 60,
+    member_count: 2,
+    departure_time_window: "08:00 AM - 08:30 AM",
+    departure_time: "08:30 AM Tomorrow",
+    departure_date: "Today, Morning",
+    rate_per_kg: 0.80,
+    standard_individual_fare: 2200,
+    solo_estimated_cost: 2200,
+    pooled_base_fare: 1100,
+    pooled_fare_estimate: 1100,
+    savings_amount: 1100,
+    savings_percent: 50.0,
+    status: "OPEN"
   }
 ];
+
 
 const DEFAULT_PAYMENTS = [
   {
@@ -1106,32 +1157,128 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     }, () => {
-      return {
+      const pools = getLocalData('logistics_pools', DEFAULT_LOGISTICS_POOLS);
+      const targetPool = pools.find(p => p.id === Number(data.pool_id)) || pools[0];
+      const produces = getLocalData('produces', DEFAULT_PRODUCES);
+      const targetProduce = produces.find(p => p.id === Number(data.produce_id)) || produces[0] || { quantity_kg: 1200, crop_name: 'Produce' };
+      const weight = Number(targetProduce.quantity_kg || 1200);
+
+      const calculatedFare = Math.round(weight * (targetPool.rate_per_kg || 0.70));
+      const soloFare = Math.round(calculatedFare * 2.0);
+      const savings = soloFare - calculatedFare;
+      const consignmentCode = `FRT-${Date.now().toString().slice(-6)}`;
+
+      const newBooking = {
+        id: Date.now(),
+        consignment_code: consignmentCode,
+        booking_ref: consignmentCode,
+        pool_id: targetPool.id,
+        farmer_id: 1,
+        farmer_name: "Ramesh Patil",
+        crop_name: targetProduce.crop_name || "Produce",
+        quantity_kg: weight,
+        pickup_location: data.pickup_location || "Pimpalgaon Baswant, Nashik",
+        pickup_time: data.pickup_time || "06:45 AM",
+        destination: targetPool.destination_mandi || "Nashik Main APMC Market Yard",
+        driver_name: targetPool.driver_name,
+        driver_phone: targetPool.driver_phone,
+        vehicle_number: targetPool.vehicle_number,
+        vehicle_type: targetPool.vehicle_type,
+        calculated_fare: calculatedFare,
+        fare_paid: calculatedFare,
+        savings_amount: savings,
+        solo_cost_benchmark: soloFare,
         status: "CONFIRMED",
-        booking_ref: `FRT-${Date.now().toString().slice(-6)}`,
-        message: "Shared freight pickup booked successfully! Driver will arrive at designated time."
+        created_at: new Date().toISOString()
       };
+
+      const existingBookings = getLocalData('farmer_freight_bookings', [
+        {
+          id: 1,
+          consignment_code: "FRT-889102",
+          booking_ref: "FRT-889102",
+          route: "Pimpalgaon -> Nashik Main APMC",
+          pickup_location: "Pimpalgaon Baswant Farmgate #4",
+          pickup_time: "07:30 AM",
+          vehicle_number: "MH-15-EG-4821",
+          vehicle_type: "Tata 407 (3.5 Ton)",
+          driver_name: "Suresh Gaikwad",
+          driver_phone: "+91 9822019283",
+          crop_name: "Tomato (Grade A)",
+          quantity_kg: 1200,
+          calculated_fare: 1020,
+          fare_paid: 1020,
+          savings_amount: 1280,
+          status: "SCHEDULED"
+        }
+      ]);
+      setLocalData('farmer_freight_bookings', [newBooking, ...existingBookings]);
+
+      // Update pool capacity in storage
+      const updatedPools = pools.map(p => {
+        if (p.id === targetPool.id) {
+          const newBooked = (p.booked_capacity_kg || 0) + weight;
+          const newAvail = Math.max(0, (p.total_capacity_kg || 3500) - newBooked);
+          return {
+            ...p,
+            booked_capacity_kg: newBooked,
+            allocated_kg: newBooked,
+            available_capacity_kg: newAvail,
+            available_kg: newAvail,
+            capacity_percentage: Math.min(100, Math.round((newBooked / (p.total_capacity_kg || 3500)) * 100)),
+            member_count: (p.member_count || 2) + 1
+          };
+        }
+        return p;
+      });
+      setLocalData('logistics_pools', updatedPools);
+
+      // Trigger notification
+      const notifs = getLocalData('notifications', DEFAULT_NOTIFICATIONS);
+      const newNotif = {
+        id: Date.now(),
+        channel: "SMS",
+        recipient_phone: "7020975052",
+        recipient_name: "Ramesh Patil",
+        event_type: "FREIGHT_CONFIRMED",
+        title: "🚚 Smart Freight Pickup Confirmed",
+        message_content: `AgroPulse Logistics: Shared pickup pass ${consignmentCode} confirmed for ${targetProduce.crop_name}. Driver ${targetPool.driver_name} (${targetPool.vehicle_number}) will arrive at ${data.pickup_time || '06:45 AM'}. Saved Rs.${savings}.`,
+        status: "DELIVERED",
+        is_read: false,
+        reference_id: consignmentCode,
+        created_at: new Date().toISOString()
+      };
+      setLocalData('notifications', [newNotif, ...notifs]);
+
+      return newBooking;
     });
   },
 
   getFarmerFreightBookings: async () => {
     return safeFetch(`${API_BASE}/logistics/farmer/1/bookings`, {}, () => {
-      return [
+      return getLocalData('farmer_freight_bookings', [
         {
           id: 1,
+          consignment_code: "FRT-889102",
           booking_ref: "FRT-889102",
           route: "Pimpalgaon -> Nashik Main APMC",
+          pickup_location: "Pimpalgaon Baswant Farmgate #4",
+          pickup_time: "07:30 AM",
           vehicle_number: "MH-15-EG-4821",
+          vehicle_type: "Tata 407 (3.5 Ton)",
           driver_name: "Suresh Gaikwad",
           driver_phone: "+91 9822019283",
-          pickup_time: "07:30 AM",
+          crop_name: "Tomato (Grade A)",
           quantity_kg: 1200,
+          calculated_fare: 1020,
           fare_paid: 1020,
+          savings_amount: 1280,
           status: "SCHEDULED"
         }
-      ];
+      ]);
     });
   },
+
 
   // Notifications & SMS
   getNotificationLogs: async () => {

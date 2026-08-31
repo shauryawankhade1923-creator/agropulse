@@ -345,9 +345,10 @@ export default function Navbar({ currentRole, setRole, activeTab, setActiveTab }
           <div className="lg:hidden flex items-center justify-between w-full">
             <span className="text-xs text-slate-400">Current View:</span>
             <span className="text-xs font-bold text-emerald-400 capitalize">
-              {activeTab.replace('-', ' ')}
+              {(activeTab || 'Dashboard').replace('-', ' ')}
             </span>
           </div>
+
 
         </div>
 

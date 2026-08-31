@@ -258,8 +258,9 @@ export default function NotificationSimulatorModal({ isOpen, onClose }) {
                         </div>
 
                         <p className="text-[11px] text-slate-400 line-clamp-2">
-                          {log.message_content.replace(/\*/g, '')}
+                          {(log.message_content || '').replace(/\*/g, '')}
                         </p>
+
 
                         <div className="flex items-center space-x-3 text-[10px] text-slate-500 pt-1 font-mono">
                           <span>To: {log.recipient_name} ({log.recipient_phone})</span>

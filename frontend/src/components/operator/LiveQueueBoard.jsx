@@ -69,7 +69,7 @@ export default function LiveQueueBoard({ onOpenScanner, onSelectTokenToProcess }
   const handleAudioAnnouncement = (tokenNum, counter) => {
     setIsAnnouncing(true);
     if ('speechSynthesis' in window) {
-      const text = `Attention please. Token Number ${tokenNum.replace(/-/g, ' ')}, please proceed to Counter Number ${counter} for grain weighment.`;
+      const text = `Attention please. Token Number ${(tokenNum || '').replace(/-/g, ' ')}, please proceed to Counter Number ${counter || 1} for grain weighment.`;
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 0.95;
       utterance.onend = () => setIsAnnouncing(false);
@@ -86,14 +86,20 @@ export default function LiveQueueBoard({ onOpenScanner, onSelectTokenToProcess }
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-blue-400">
-              Weighbridge Operations & Computer Vision
-            </span>
+            <div className="flex items-center space-x-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-blue-400">
+                APMC Real-Time Queue Telemetry
+              </span>
+              <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping mr-1" />
+                LIVE SYNC
+              </span>
+            </div>
             <h1 className="text-xl sm:text-2xl font-bold text-white mt-1">
-              Live Mandi Queue & Weighment Console
+              Live Mandi Digital Token Display
             </h1>
             <p className="text-slate-400 text-xs sm:text-sm mt-1">
-              Active counter management, real-time AI CCTV vehicle queue detection, and automated gate callouts.
+              Public display board broadcasting called token IDs, weighment counters, and live yard status.
             </p>
           </div>
 
@@ -184,8 +190,9 @@ export default function LiveQueueBoard({ onOpenScanner, onSelectTokenToProcess }
                   CURRENT CALL
                 </span>
                 <span className="text-xs text-slate-500 font-mono">
-                  {boardData.current_calling.status.replace('_', ' ')}
+                  {(boardData.current_calling.status || 'CALLING').replace('_', ' ')}
                 </span>
+
               </div>
 
               <div className="text-4xl sm:text-5xl font-bold text-white font-mono tracking-tight">

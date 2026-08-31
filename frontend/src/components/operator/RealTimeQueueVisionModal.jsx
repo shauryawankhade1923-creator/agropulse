@@ -324,11 +324,12 @@ export default function RealTimeQueueVisionModal({
                   >
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-[10px] font-mono">
-                        <span className="text-blue-400 font-bold uppercase">{s.key.replace(/_/g, ' ')}</span>
+                        <span className="text-blue-400 font-bold uppercase">{(s.key || 'CCTV_BAY').replace(/_/g, ' ')}</span>
                         <span className="px-1 py-0.2 rounded bg-slate-900 text-slate-300 border border-slate-800">
-                          {s.tractors_count + s.trucks_count + s.tempos_count} Veh
+                          {(s.tractors_count || 0) + (s.trucks_count || 0) + (s.tempos_count || 0)} Veh
                         </span>
                       </div>
+
                       <h4 className="text-xs font-bold text-white line-clamp-1">{s.title}</h4>
                       <p className="text-[10px] text-slate-400 line-clamp-2 leading-relaxed">{s.description}</p>
                     </div>
