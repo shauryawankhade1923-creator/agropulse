@@ -208,7 +208,9 @@ export default function BuyerBidsTracker({ onBrowseMarketplace }) {
             bids.map((b) => {
               const isAccepted = b.status === 'ACCEPTED';
               const isRejected = b.status === 'REJECTED';
-              const totalVal = b.offered_price_per_kg * b.quantity_requested_kg;
+              const bidRate = b.offered_price_per_kg || b.offered_price || 0;
+              const bidQty = b.quantity_requested_kg || b.quantity_requested || 0;
+              const totalVal = bidRate * bidQty;
 
               return (
                 <div
@@ -241,12 +243,13 @@ export default function BuyerBidsTracker({ onBrowseMarketplace }) {
                       </div>
 
                       <div className="flex flex-wrap items-center gap-3 text-xs text-slate-300 font-mono">
-                        <span>Bid Rate: <strong className="text-emerald-400">₹{b.offered_price_per_kg}/kg</strong></span>
+                        <span>Bid Rate: <strong className="text-emerald-400">₹{bidRate}/kg</strong></span>
                         <span>•</span>
-                        <span>Volume: <strong>{b.quantity_requested_kg.toLocaleString()} kg</strong></span>
+                        <span>Volume: <strong>{(bidQty || 0).toLocaleString()} kg</strong></span>
                         <span>•</span>
-                        <span>Total Value: <strong className="text-white">₹{totalVal.toLocaleString('en-IN')}</strong></span>
+                        <span>Total Value: <strong className="text-white">₹{(totalVal || 0).toLocaleString('en-IN')}</strong></span>
                       </div>
+
 
                       {b.message && (
                         <p className="text-[11px] text-slate-500 italic mt-0.5">

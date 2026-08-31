@@ -277,7 +277,7 @@ export default function SmartFreightPooling({ onNavigateProduce }) {
                             ? 'bg-rose-950 text-rose-400 border border-rose-900'
                             : 'bg-emerald-950 text-emerald-400 border border-emerald-800'
                         }`}>
-                          {isFull ? 'CAPACITY FULL' : `${p.available_capacity_kg.toLocaleString()} kg SPACE`}
+                          {isFull ? 'CAPACITY FULL' : `${(p.available_capacity_kg || p.available_kg || 0).toLocaleString()} kg SPACE`}
                         </span>
                       </div>
 
@@ -285,23 +285,23 @@ export default function SmartFreightPooling({ onNavigateProduce }) {
                       <div className="mt-3 bg-slate-950 p-3 rounded-lg border border-slate-800/80 space-y-2 text-xs">
                         <div className="flex items-center space-x-2 text-slate-300 font-medium">
                           <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                          <span className="truncate">{p.route_summary}</span>
+                          <span className="truncate">{p.route_summary || p.route_name}</span>
                         </div>
                         <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1 border-t border-slate-850">
                           <span className="flex items-center space-x-1">
                             <Clock className="w-3 h-3 text-slate-500" />
-                            <span>Departs: {p.departure_time_window}</span>
+                            <span>Departs: {p.departure_time_window || p.departure_time}</span>
                           </span>
-                          <span>{p.departure_date}</span>
+                          <span>{p.departure_date || 'Tomorrow'}</span>
                         </div>
                       </div>
 
                       {/* Capacity Progress Bar */}
                       <div className="mt-3 space-y-1">
                         <div className="flex justify-between text-[11px] font-mono">
-                          <span className="text-slate-400">Cargo Fill ({p.member_count} Farmers):</span>
+                          <span className="text-slate-400">Cargo Fill ({p.member_count || 2} Farmers):</span>
                           <strong className="text-white">
-                            {p.booked_capacity_kg.toLocaleString()} / {p.total_capacity_kg.toLocaleString()} kg ({fillPct}%)
+                            {(p.booked_capacity_kg || p.allocated_kg || 0).toLocaleString()} / {(p.total_capacity_kg || 0).toLocaleString()} kg ({fillPct}%)
                           </strong>
                         </div>
                         <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
@@ -342,16 +342,17 @@ export default function SmartFreightPooling({ onNavigateProduce }) {
                         <span className="text-[10px] text-slate-500 uppercase block">Shared Pool Fare</span>
                         <div className="flex items-baseline space-x-1.5">
                           <strong className="text-base font-bold text-emerald-400 font-mono">
-                            ~₹{p.pooled_base_fare.toLocaleString('en-IN')}
+                            ~₹{(p.pooled_base_fare || p.pooled_fare_estimate || 0).toLocaleString('en-IN')}
                           </strong>
                           <span className="text-xs text-slate-500 line-through font-mono">
-                            ₹{p.solo_estimated_cost.toLocaleString('en-IN')}
+                            ₹{(p.solo_estimated_cost || p.standard_individual_fare || 0).toLocaleString('en-IN')}
                           </span>
                         </div>
                         <span className="text-[10px] text-emerald-400 font-semibold block">
-                          Save {p.estimated_savings_percent}% on freight
+                          Save {p.estimated_savings_percent || p.savings_percent || 35}% on freight
                         </span>
                       </div>
+
 
                       <button
                         disabled={isFull}

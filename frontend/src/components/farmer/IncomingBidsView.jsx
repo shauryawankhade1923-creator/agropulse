@@ -138,7 +138,7 @@ export default function IncomingBidsView({ onBookSlotForProduce }) {
         <div className="bg-slate-900 border border-slate-800 p-5 rounded-xl shadow-sm">
           <span className="text-xs text-slate-500 uppercase font-medium block mb-1">{t('total_bids_value')}</span>
           <div className="text-2xl font-bold text-white font-mono">
-            ₹{offers.reduce((acc, o) => acc + (o.offered_price_per_kg * o.quantity_requested_kg), 0).toLocaleString('en-IN')}
+            ₹{offers.reduce((acc, o) => acc + ((o.offered_price_per_kg || o.offered_price || 0) * (o.quantity_requested_kg || o.quantity_requested || 0)), 0).toLocaleString('en-IN')}
           </div>
           <span className="text-[11px] text-slate-400 mt-1 block">
             {t('across_lots')}
@@ -174,7 +174,9 @@ export default function IncomingBidsView({ onBookSlotForProduce }) {
             const isAccepted = offer.status === 'ACCEPTED';
             const isRejected = offer.status === 'REJECTED';
             const isTokenCancelled = isRejected && (offer.message?.toLowerCase().includes('token') || offer.message?.toLowerCase().includes('cancelled'));
-            const totalVal = offer.offered_price_per_kg * offer.quantity_requested_kg;
+            const bidRate = offer.offered_price_per_kg || offer.offered_price || 0;
+            const bidQty = offer.quantity_requested_kg || offer.quantity_requested || 0;
+            const totalVal = bidRate * bidQty;
 
             return (
               <div
@@ -228,15 +230,16 @@ export default function IncomingBidsView({ onBookSlotForProduce }) {
                         Target Lot: <strong className="text-white">#{offer.produce_id} - {offer.crop_name}</strong>
                       </span>
                       <span className="px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300 font-mono">
-                        Bid Rate: <strong className="text-emerald-400 font-bold">₹{offer.offered_price_per_kg}/kg</strong>
+                        Bid Rate: <strong className="text-emerald-400 font-bold">₹{bidRate}/kg</strong>
                       </span>
                       <span className="px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300 font-mono">
-                        Quantity: <strong className="text-white">{offer.quantity_requested_kg.toLocaleString()} kg</strong>
+                        Quantity: <strong className="text-white">{(bidQty || 0).toLocaleString()} kg</strong>
                       </span>
                       <span className="px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-emerald-400 font-bold font-mono">
-                        Total: ₹{totalVal.toLocaleString('en-IN')}
+                        Total: ₹{(totalVal || 0).toLocaleString('en-IN')}
                       </span>
                     </div>
+
 
                     {/* Cancellation or Transporter Message */}
                     {isTokenCancelled ? (

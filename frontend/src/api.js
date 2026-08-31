@@ -10,12 +10,16 @@ const DEFAULT_PRODUCES = [
   {
     id: 1,
     farmer_id: 1,
+    farmer_name: "Ramesh Patil",
     crop_name: "Onion",
     variety: "Nashik Red Special",
     total_quantity: 2500,
     available_quantity: 2500,
+    quantity_kg: 2500,
     unit: "kg",
     asking_price: 26.50,
+    expected_price_per_kg: 26.50,
+    price_per_kg: 26.50,
     quality_grade: "Grade A",
     moisture_content: 11.2,
     location: "Pimpalgaon Baswant, Nashik, Maharashtra",
@@ -26,12 +30,16 @@ const DEFAULT_PRODUCES = [
   {
     id: 2,
     farmer_id: 1,
+    farmer_name: "Ramesh Patil",
     crop_name: "Tomato",
     variety: "Abhinav Hybrid",
     total_quantity: 1200,
     available_quantity: 1200,
+    quantity_kg: 1200,
     unit: "kg",
     asking_price: 28.00,
+    expected_price_per_kg: 28.00,
+    price_per_kg: 28.00,
     quality_grade: "Grade A",
     moisture_content: 9.5,
     location: "Niphad, Nashik, Maharashtra",
@@ -42,12 +50,16 @@ const DEFAULT_PRODUCES = [
   {
     id: 3,
     farmer_id: 2,
+    farmer_name: "Balasaheb Kadam",
     crop_name: "Wheat",
     variety: "Sharbati Gold",
     total_quantity: 5000,
     available_quantity: 5000,
+    quantity_kg: 5000,
     unit: "kg",
     asking_price: 34.00,
+    expected_price_per_kg: 34.00,
+    price_per_kg: 34.00,
     quality_grade: "Grade A",
     moisture_content: 10.0,
     location: "Khanna, Punjab",
@@ -58,12 +70,16 @@ const DEFAULT_PRODUCES = [
   {
     id: 4,
     farmer_id: 3,
+    farmer_name: "Santosh More",
     crop_name: "Soybean",
     variety: "JS 335",
     total_quantity: 3500,
     available_quantity: 3500,
+    quantity_kg: 3500,
     unit: "kg",
     asking_price: 48.00,
+    expected_price_per_kg: 48.00,
+    price_per_kg: 48.00,
     quality_grade: "Grade B",
     moisture_content: 12.0,
     location: "Indore, Madhya Pradesh",
@@ -83,7 +99,9 @@ const DEFAULT_BUYER_OFFERS = [
     buyer_company: "Reliance Retail Agro Hub",
     buyer_phone: "+91 9822019283",
     offered_price: 27.50,
+    offered_price_per_kg: 27.50,
     quantity_requested: 2500,
+    quantity_requested_kg: 2500,
     proposed_pickup_date: "Tomorrow",
     transport_mode: "BUYER_ARRANGED",
     status: "PENDING",
@@ -98,7 +116,9 @@ const DEFAULT_BUYER_OFFERS = [
     buyer_company: "BigBasket Direct Sourcing",
     buyer_phone: "+91 9833091823",
     offered_price: 29.00,
+    offered_price_per_kg: 29.00,
     quantity_requested: 1200,
+    quantity_requested_kg: 1200,
     proposed_pickup_date: "Today Evening",
     transport_mode: "MANDI_POOLING",
     status: "PENDING",
@@ -116,6 +136,7 @@ const DEFAULT_TOKENS = [
     farmer_phone: "7020975052",
     crop_name: "Onion",
     quantity: 2500,
+    quantity_kg: 2500,
     center_id: 1,
     center_name: "Nashik Main APMC Market Yard",
     counter_id: 2,
@@ -124,6 +145,94 @@ const DEFAULT_TOKENS = [
     status: "BOOKED",
     qr_code_payload: "APMC-TOKEN-AP-2026-9901-RAMESH-PATIL",
     created_at: new Date(Date.now() - 3600000 * 3).toISOString()
+  }
+];
+
+const DEFAULT_LOGISTICS_POOLS = [
+  {
+    id: 1,
+    route_name: "Pimpalgaon -> Nashik Main APMC",
+    truck_type: "Tata 407 (3.5 Ton Capacity)",
+    driver_name: "Suresh Gaikwad",
+    driver_phone: "+91 9822019283",
+    vehicle_number: "MH-15-EG-4821",
+    total_capacity_kg: 3500,
+    allocated_kg: 2500,
+    booked_capacity_kg: 2500,
+    available_capacity_kg: 1000,
+    available_kg: 1000,
+    departure_time: "07:30 AM Tomorrow",
+    rate_per_kg: 0.85,
+    standard_individual_fare: 2800,
+    solo_estimated_cost: 2800,
+    pooled_base_fare: 1750,
+    pooled_fare_estimate: 1750,
+    savings_percent: 37.5
+  },
+  {
+    id: 2,
+    route_name: "Niphad Catchment -> Lasalgaon APMC",
+    truck_type: "Mahindra Bolero Pickup (1.8 Ton)",
+    driver_name: "Kailash Patil",
+    driver_phone: "+91 9890123456",
+    vehicle_number: "MH-15-AZ-9912",
+    total_capacity_kg: 1800,
+    allocated_kg: 800,
+    booked_capacity_kg: 800,
+    available_capacity_kg: 1000,
+    available_kg: 1000,
+    departure_time: "06:00 AM Tomorrow",
+    rate_per_kg: 0.90,
+    standard_individual_fare: 1900,
+    solo_estimated_cost: 1900,
+    pooled_base_fare: 1200,
+    pooled_fare_estimate: 1200,
+    savings_percent: 36.8
+  }
+];
+
+const DEFAULT_PAYMENTS = [
+  {
+    id: 1,
+    farmer_id: 1,
+    settlement_id: "DBT-2026-8819",
+    produce_name: "Onion (Grade A)",
+    crop_name: "Onion",
+    farmer_name: "Ramesh Patil",
+    buyer_name: "Rajesh Aggarwal",
+    quantity_kg: 2500,
+    measured_weight_kg: 2500,
+    gross_amount: 68750.00,
+    mandi_cess_deducted: 687.50,
+    mandi_cess_deduction: 687.50,
+    net_disbursed: 68062.50,
+    amount: 68062.50,
+    bank_name: "State Bank of India (SBIN-XXXX-4819)",
+    utr_number: "UTR202608319912",
+    status: "DISBURSED",
+    paid_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+    payment_date: "Today, 11:30 AM"
+  },
+  {
+    id: 2,
+    farmer_id: 1,
+    settlement_id: "DBT-2026-7734",
+    produce_name: "Tomato (Grade A)",
+    crop_name: "Tomato",
+    farmer_name: "Ramesh Patil",
+    buyer_name: "Vikram Mehta",
+    quantity_kg: 1200,
+    measured_weight_kg: 1200,
+    gross_amount: 34800.00,
+    mandi_cess_deducted: 348.00,
+    mandi_cess_deduction: 348.00,
+    net_disbursed: 34452.00,
+    amount: 34452.00,
+    bank_name: "State Bank of India (SBIN-XXXX-4819)",
+    utr_number: "UTR202608284419",
+    status: "DISBURSED",
+    paid_at: new Date(Date.now() - 3600000 * 48).toISOString(),
+    payment_date: "28 Aug 2026"
   }
 ];
 
@@ -155,6 +264,7 @@ const DEFAULT_NOTIFICATIONS = [
     created_at: new Date(Date.now() - 3600000).toISOString()
   }
 ];
+
 
 // Helper to get/set local storage with fallback
 function getLocalData(key, fallback) {
@@ -521,42 +631,10 @@ export const api = {
   // Smart Freight & Logistics Pooling
   getLogisticsPools: async () => {
     return safeFetch(`${API_BASE}/logistics/pools`, {}, () => {
-      return [
-        {
-          id: 1,
-          route_name: "Pimpalgaon -> Nashik Main APMC",
-          truck_type: "Tata 407 (3.5 Ton Capacity)",
-          driver_name: "Suresh Gaikwad",
-          driver_phone: "+91 9822019283",
-          vehicle_number: "MH-15-EG-4821",
-          total_capacity_kg: 3500,
-          allocated_kg: 2500,
-          available_kg: 1000,
-          departure_time: "07:30 AM Tomorrow",
-          rate_per_kg: 0.85,
-          standard_individual_fare: 2800,
-          pooled_fare_estimate: 1750,
-          savings_percent: 37.5
-        },
-        {
-          id: 2,
-          route_name: "Niphad Catchment -> Lasalgaon APMC",
-          truck_type: "Mahindra Bolero Pickup (1.8 Ton)",
-          driver_name: "Kailash Patil",
-          driver_phone: "+91 9890123456",
-          vehicle_number: "MH-15-AZ-9912",
-          total_capacity_kg: 1800,
-          allocated_kg: 800,
-          available_kg: 1000,
-          departure_time: "06:00 AM Tomorrow",
-          rate_per_kg: 0.90,
-          standard_individual_fare: 1900,
-          pooled_fare_estimate: 1200,
-          savings_percent: 36.8
-        }
-      ];
+      return getLocalData('logistics_pools', DEFAULT_LOGISTICS_POOLS);
     });
   },
+
 
   joinFreightPool: async (data) => {
     return safeFetch(`${API_BASE}/logistics/join-pool`, {
@@ -693,46 +771,16 @@ export const api = {
   // Payments & DBT
   getFarmerPayments: async () => {
     return safeFetch(`${API_BASE}/payments/farmer/1`, {}, () => {
-      return [
-        {
-          id: 1,
-          settlement_id: "DBT-2026-8819",
-          produce_name: "Onion (Grade A)",
-          quantity_kg: 2500,
-          gross_amount: 68750.00,
-          mandi_cess_deducted: 687.50,
-          net_disbursed: 68062.50,
-          bank_name: "State Bank of India (SBIN-XXXX-4819)",
-          utr_number: "UTR202608319912",
-          status: "DISBURSED",
-          payment_date: "Today, 11:30 AM"
-        },
-        {
-          id: 2,
-          settlement_id: "DBT-2026-7734",
-          produce_name: "Tomato (Grade A)",
-          quantity_kg: 1200,
-          gross_amount: 34800.00,
-          mandi_cess_deducted: 348.00,
-          net_disbursed: 34452.00,
-          bank_name: "State Bank of India (SBIN-XXXX-4819)",
-          utr_number: "UTR202608284419",
-          status: "DISBURSED",
-          payment_date: "28 Aug 2026"
-        }
-      ];
+      return getLocalData('payments', DEFAULT_PAYMENTS);
     });
   },
 
   getAllPayments: async () => {
     return safeFetch(`${API_BASE}/payments/all`, {}, () => {
-      return [
-        { id: 1, farmer_name: "Ramesh Patil", produce: "Onion", amount: 68062.50, status: "DISBURSED", utr: "UTR202608319912" },
-        { id: 2, farmer_name: "Balasaheb Kadam", produce: "Tomato", amount: 34452.00, status: "DISBURSED", utr: "UTR202608301124" },
-        { id: 3, farmer_name: "Santosh More", produce: "Wheat", amount: 162500.00, status: "PROCESSING", utr: "PENDING_BANK" }
-      ];
+      return getLocalData('payments', DEFAULT_PAYMENTS);
     });
   },
+
 
   // Analytics
   getAnalyticsSummary: async () => {

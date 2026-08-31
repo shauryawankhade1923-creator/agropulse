@@ -205,17 +205,18 @@ export default function BuyerMarketplace() {
                 <div className="bg-slate-950 rounded-lg p-3 border border-slate-800 space-y-1.5 text-xs mb-3 font-mono">
                   <div className="flex justify-between items-center">
                     <span className="text-slate-500 font-sans">{t('available_qty')}:</span>
-                    <strong className="text-white">{p.quantity_kg.toLocaleString()} kg</strong>
+                    <strong className="text-white">{(p.quantity_kg || p.total_quantity || 0).toLocaleString()} kg</strong>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-slate-500 font-sans">{t('asking_price')}:</span>
-                    <strong className="text-emerald-400 font-semibold text-sm">₹{p.expected_price_per_kg}/kg</strong>
+                    <strong className="text-emerald-400 font-semibold text-sm">₹{p.expected_price_per_kg || p.asking_price || 0}/kg</strong>
                   </div>
                   <div className="flex justify-between items-center text-[11px]">
                     <span className="text-slate-500 font-sans">{t('valuation_band')}:</span>
-                    <span className="text-slate-400">₹{p.ai_recommended_min || p.expected_price_per_kg - 2} - ₹{p.ai_recommended_max || p.expected_price_per_kg + 3}/kg</span>
+                    <span className="text-slate-400">₹{p.ai_recommended_min || (p.expected_price_per_kg || p.asking_price || 25) - 2} - ₹{p.ai_recommended_max || (p.expected_price_per_kg || p.asking_price || 25) + 3}/kg</span>
                   </div>
                 </div>
+
 
                 {/* Farmer & Location Info */}
                 <div className="flex items-center justify-between text-xs text-slate-400 mb-4">

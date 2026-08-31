@@ -131,7 +131,7 @@ export default function BuyerMatchingRadar({ selectedProduceId, onBookSlotForPro
 
           <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl">
             <span className="text-[11px] text-slate-500 block uppercase font-medium">Quantity & Grade</span>
-            <strong className="text-sm text-white font-mono mt-0.5 block">{activeProduce.quantity_kg.toLocaleString()} kg</strong>
+            <strong className="text-sm text-white font-mono mt-0.5 block">{(activeProduce.quantity_kg || activeProduce.total_quantity || 0).toLocaleString()} kg</strong>
             <span className="text-[11px] text-emerald-400 block font-semibold flex items-center space-x-1">
               <ShieldCheck className="w-3 h-3 inline" />
               <span>Grade {activeProduce.quality_grade} {activeProduce.ai_vision_verified ? `(${activeProduce.ai_quality_score || 95}% AI Certified)` : 'Verified'}</span>
@@ -140,11 +140,12 @@ export default function BuyerMatchingRadar({ selectedProduceId, onBookSlotForPro
 
           <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl">
             <span className="text-[11px] text-slate-500 block uppercase font-medium">Asking Rate</span>
-            <strong className="text-sm text-emerald-400 font-mono mt-0.5 block">₹{activeProduce.expected_price_per_kg}/kg</strong>
+            <strong className="text-sm text-emerald-400 font-mono mt-0.5 block">₹{activeProduce.expected_price_per_kg || activeProduce.asking_price || 0}/kg</strong>
             <span className="text-[11px] text-slate-400 block font-mono">
-              ₹{(activeProduce.quantity_kg * activeProduce.expected_price_per_kg).toLocaleString('en-IN')}
+              ₹{(((activeProduce.quantity_kg || activeProduce.total_quantity || 0) * (activeProduce.expected_price_per_kg || activeProduce.asking_price || 0)) || 0).toLocaleString('en-IN')}
             </span>
           </div>
+
 
           <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex items-center justify-between">
             <div>
