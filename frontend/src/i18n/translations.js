@@ -23,8 +23,9 @@ export const translations = {
 
     // Navigation Tabs - Buyer
     nav_marketplace: "Produce Marketplace",
-    nav_my_bids: "My Bids",
+    nav_my_bids: "My Purchase Orders",
     nav_buyer_payments: "Invoices & Payments",
+
 
     // Navigation Tabs - Operator
     nav_queue: "Live Queue Console",
@@ -81,7 +82,7 @@ export const translations = {
     available_qty: "Available Quantity",
     asking_price: "Asking Price",
     valuation_band: "Valuation Band",
-    btn_place_bid: "Place Purchase Bid",
+    btn_place_bid: "Place Purchase Order",
 
     // Optical Assay Modal
     optical_cert_title: "AI Optical Quality Certificate",
@@ -92,7 +93,8 @@ export const translations = {
     moisture_ratio: "Moisture Ratio",
     optical_notes: "Optical Inspection Notes",
     btn_close: "Close",
-    btn_bid_this_lot: "Bid on This Lot",
+    btn_bid_this_lot: "Order This Lot",
+
 
     // Incoming Bids View
     bids_sub: "Direct Sourcing Desk",
@@ -205,8 +207,9 @@ export const translations = {
 
     // Navigation Tabs - Buyer
     nav_marketplace: "शेतमाल बाजारपेठ",
-    nav_my_bids: "माझ्या खरेदी बोल्या",
+    nav_my_bids: "माझ्या खरेदी ऑर्डर्स",
     nav_buyer_payments: "बिले व देयके",
+
 
     // Navigation Tabs - Operator
     nav_queue: "थेट रांग व्यवस्थापन",

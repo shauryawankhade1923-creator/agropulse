@@ -134,10 +134,10 @@ export default function BuyerBidsTracker({ onBrowseMarketplace }) {
                 Procurement Portfolio
               </span>
               <h1 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                My Active Purchase Bids
+                My Purchase Orders & Deals
               </h1>
               <p className="text-slate-400 text-xs sm:text-sm mt-1">
-                Track bids submitted to farmers, acceptance status, and procurement commitments.
+                Track purchase orders submitted to farmers, acceptance status, and procurement commitments.
               </p>
             </div>
 
@@ -146,12 +146,12 @@ export default function BuyerBidsTracker({ onBrowseMarketplace }) {
                 onClick={() => onBrowseMarketplace && onBrowseMarketplace()}
                 className="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-medium rounded-lg text-xs transition"
               >
-                + Place New Bid
+                + New Purchase Order
               </button>
               <button
                 onClick={() => { setLoading(true); fetchBids().finally(() => setLoading(false)); }}
                 className="p-2 rounded-lg bg-slate-950 hover:bg-slate-850 text-slate-300 border border-slate-800 transition"
-                title="Refresh Bids"
+                title="Refresh Orders"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-amber-500' : ''}`} />
               </button>
@@ -162,9 +162,9 @@ export default function BuyerBidsTracker({ onBrowseMarketplace }) {
         {/* KPI Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-slate-900 border border-slate-800 p-5 rounded-xl">
-            <span className="text-xs text-slate-500 uppercase font-medium block mb-1">Total Active Bids</span>
+            <span className="text-xs text-slate-500 uppercase font-medium block mb-1">Total Active Orders</span>
             <div className="text-2xl font-bold text-white font-mono">
-              {bids.length} Bids
+              {bids.length} Orders
             </div>
             <span className="text-[11px] text-slate-400 mt-1 block">
               Across active farmer lots
@@ -191,6 +191,7 @@ export default function BuyerBidsTracker({ onBrowseMarketplace }) {
             </span>
           </div>
         </div>
+
 
         {/* Bids List */}
         <div className="space-y-3">
