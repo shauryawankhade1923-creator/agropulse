@@ -1235,15 +1235,54 @@ export const api = {
   // Payments & DBT
   getFarmerPayments: async () => {
     return safeFetch(`${API_BASE}/payments/farmer/1`, {}, () => {
-      return getLocalData('payments', DEFAULT_PAYMENTS);
+      const list = getLocalData('payments', DEFAULT_PAYMENTS);
+      return list.map(p => ({
+        ...p,
+        transaction_ref: p.transaction_ref || p.settlement_id || `DBT-2026-${p.id || 101}`,
+        settlement_id: p.settlement_id || p.transaction_ref || `DBT-2026-${p.id || 101}`,
+        payment_mode: p.payment_mode || 'DIRECT_BENEFIT_TRANSFER',
+        token_number: p.token_number || 'AP-2026-9901',
+        bank_account_masked: p.bank_account_masked || p.bank_name || 'SBIN-XXXX-4819',
+        bank_name: p.bank_name || 'State Bank of India (SBIN-XXXX-4819)',
+        center_name: p.center_name || 'Nashik Main APMC Market Yard',
+        crop_name: p.crop_name || p.produce_name || 'Onion (Grade A)',
+        produce_name: p.produce_name || p.crop_name || 'Onion (Grade A)',
+        farmer_name: p.farmer_name || 'Ramesh Patil',
+        amount: Number(p.amount || p.net_disbursed || 68062.50),
+        net_disbursed: Number(p.net_disbursed || p.amount || 68062.50),
+        gross_amount: Number(p.gross_amount || ((p.amount || 68062.50) / 0.99)),
+        mandi_cess_deduction: Number(p.mandi_cess_deduction || p.mandi_cess_deducted || ((p.amount || 68062.50) * 0.01)),
+        utr_number: p.utr_number || 'UTR202608319912',
+        status: p.status || 'SETTLED'
+      }));
     });
   },
 
   getAllPayments: async () => {
     return safeFetch(`${API_BASE}/payments/all`, {}, () => {
-      return getLocalData('payments', DEFAULT_PAYMENTS);
+      const list = getLocalData('payments', DEFAULT_PAYMENTS);
+      return list.map(p => ({
+        ...p,
+        transaction_ref: p.transaction_ref || p.settlement_id || `DBT-2026-${p.id || 101}`,
+        settlement_id: p.settlement_id || p.transaction_ref || `DBT-2026-${p.id || 101}`,
+        payment_mode: p.payment_mode || 'DIRECT_BENEFIT_TRANSFER',
+        token_number: p.token_number || 'AP-2026-9901',
+        bank_account_masked: p.bank_account_masked || p.bank_name || 'SBIN-XXXX-4819',
+        bank_name: p.bank_name || 'State Bank of India (SBIN-XXXX-4819)',
+        center_name: p.center_name || 'Nashik Main APMC Market Yard',
+        crop_name: p.crop_name || p.produce_name || 'Onion (Grade A)',
+        produce_name: p.produce_name || p.crop_name || 'Onion (Grade A)',
+        farmer_name: p.farmer_name || 'Ramesh Patil',
+        amount: Number(p.amount || p.net_disbursed || 68062.50),
+        net_disbursed: Number(p.net_disbursed || p.amount || 68062.50),
+        gross_amount: Number(p.gross_amount || ((p.amount || 68062.50) / 0.99)),
+        mandi_cess_deduction: Number(p.mandi_cess_deduction || p.mandi_cess_deducted || ((p.amount || 68062.50) * 0.01)),
+        utr_number: p.utr_number || 'UTR202608319912',
+        status: p.status || 'SETTLED'
+      }));
     });
   },
+
 
 
   // Analytics
