@@ -214,24 +214,35 @@ export const api = {
         Onion: 26.50, Tomato: 28.00, Potato: 22.00, Wheat: 32.50,
         Soybean: 46.00, Banana: 18.00, Mango: 65.00, Apple: 95.00, Cotton: 72.00
       };
-      const base = basePrices[params.crop_name] || 25.00;
-      const gradeMultiplier = params.quality_grade === 'Grade A' ? 1.08 : (params.quality_grade === 'Grade C' ? 0.90 : 1.0);
-      const moistureDiscount = params.moisture_content > 12 ? (params.moisture_content - 12) * 0.4 : 0;
-      const fair = Math.max(10, Math.round((base * gradeMultiplier - moistureDiscount) * 100) / 100);
+      const crop = params?.crop_name || 'Onion';
+      const grade = params?.quality_grade || 'Grade A';
+      const moisture = Number(params?.moisture_content || 10);
+      const base = basePrices[crop] || 25.00;
+      const isGradeA = grade === 'A' || grade === 'Grade A';
+      const isGradeC = grade === 'C' || grade === 'Grade C';
+      const gradeMultiplier = isGradeA ? 1.08 : (isGradeC ? 0.90 : 1.0);
+      const moistureDiscount = moisture > 12 ? (moisture - 12) * 0.4 : 0;
+      const target = Math.max(10, Math.round((base * gradeMultiplier - moistureDiscount) * 100) / 100);
+      const minP = Math.round(target * 0.92 * 100) / 100;
+      const maxP = Math.round(target * 1.12 * 100) / 100;
+      const msp = Math.round(base * 0.85 * 100) / 100;
 
       return {
-        crop_name: params.crop_name,
-        recommended_fair_price: fair,
-        recommended_floor_price: Math.round(fair * 0.92 * 100) / 100,
-        recommended_ceiling_price: Math.round(fair * 1.12 * 100) / 100,
-        historical_modal_price: base,
-        projected_mandi_demand: "HIGH (Festival Season)",
-        confidence_score: 96.4,
-        market_sentiment: "BULLISH",
-        explanation: `Calculated from APMC arrivals and certified ${params.quality_grade || 'Grade A'} specs with ${params.moisture_content || 10}% moisture.`
+        recommended_target_per_kg: target,
+        recommended_min_per_kg: minP,
+        recommended_max_per_kg: maxP,
+        msp_price_per_kg: msp,
+        historical_avg_per_kg: base,
+        factors: [
+          { factor_name: `AGMARK Quality (${grade})`, impact_pct: isGradeA ? 8.0 : -5.0, description: "Certified quality produce inspection score." },
+          { factor_name: `Moisture Level (${moisture}%)`, impact_pct: moisture > 12 ? -3.5 : 2.0, description: "Optimal storage range verification." },
+          { factor_name: "Regional Demand Index", impact_pct: 4.5, description: "Active buyer liquidity in APMC catchment." }
+        ],
+        market_insights: `Strong buyer procurement demand for ${crop} across APMC market yards.`
       };
     });
   },
+
 
   predictQueueWaitTime: async (params) => {
     return safeFetch(`${API_BASE}/ai/queue-wait-time`, {
@@ -727,13 +738,25 @@ export const api = {
   getAnalyticsSummary: async () => {
     return safeFetch(`${API_BASE}/analytics/summary`, {}, () => {
       return {
-        total_farmers: 12480,
-        total_buyers: 840,
-        total_produce_traded_mt: 4280.5,
-        total_gmv_inr: 142850000,
-        average_time_saved_percent: 64.2,
-        farmer_price_realization_boost_percent: 18.6,
-        active_mandis: 7,
+        total_procured_kg: 4280500,
+        total_payments_disbursed: 14285000,
+        avg_waiting_time_minutes: 12.5,
+        total_farmers_active: 1248,
+        price_trends_7d: [
+          { day: "Mon", Onion: 24.5, Wheat: 32.0, Soybean: 45.0 },
+          { day: "Tue", Onion: 25.0, Wheat: 32.5, Soybean: 45.5 },
+          { day: "Wed", Onion: 25.8, Wheat: 33.0, Soybean: 46.0 },
+          { day: "Thu", Onion: 26.2, Wheat: 33.5, Soybean: 46.8 },
+          { day: "Fri", Onion: 26.5, Wheat: 34.0, Soybean: 47.2 },
+          { day: "Sat", Onion: 27.0, Wheat: 34.2, Soybean: 48.0 },
+          { day: "Sun", Onion: 26.8, Wheat: 34.0, Soybean: 48.0 }
+        ],
+        mandi_performance: [
+          { name: "Nashik Main APMC Market Yard", efficiency: 94, throughput_tons: 1850, avg_wait_min: 10 },
+          { name: "Lasalgaon APMC (Onion Hub)", efficiency: 91, throughput_tons: 1420, avg_wait_min: 14 },
+          { name: "Pimpalgaon APMC Market", efficiency: 88, throughput_tons: 680, avg_wait_min: 18 },
+          { name: "Khanna Grain Market", efficiency: 95, throughput_tons: 820, avg_wait_min: 8 }
+        ],
         top_commodities: [
           { name: "Onion", volume_mt: 1850, avg_rate: 26.50 },
           { name: "Tomato", volume_mt: 940, avg_rate: 28.00 },
@@ -743,6 +766,7 @@ export const api = {
       };
     });
   },
+
 
   // Trade Reviews
   submitTradeReview: async (data) => {

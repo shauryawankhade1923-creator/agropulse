@@ -536,7 +536,7 @@ export default function ProduceListingWizard({ onProduceCreated, onNavigateMatch
                   </h4>
                   
                   <div className="space-y-2">
-                    {aiPricing.factors.map((f, idx) => (
+                    {(aiPricing.factors || []).map((f, idx) => (
                       <div key={idx} className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-xs">
                         <div className="flex items-center justify-between mb-0.5">
                           <span className="text-slate-300 font-medium">{f.factor_name}</span>
