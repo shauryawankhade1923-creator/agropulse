@@ -105,10 +105,29 @@ const DEFAULT_BUYER_OFFERS = [
     proposed_pickup_date: "Tomorrow",
     transport_mode: "BUYER_ARRANGED",
     status: "PENDING",
+    message: "Urgent procurement batch for Mumbai hypermarket supply.",
     created_at: new Date(Date.now() - 3600000 * 1).toISOString()
   },
   {
     id: 2,
+    produce_id: 1,
+    crop_name: "Onion",
+    buyer_id: 6,
+    buyer_name: "Amit Deshmukh",
+    buyer_company: "ITC e-Choupal Procurement",
+    buyer_phone: "+91 9811902811",
+    offered_price: 28.20,
+    offered_price_per_kg: 28.20,
+    quantity_requested: 2500,
+    quantity_requested_kg: 2500,
+    proposed_pickup_date: "Today Evening",
+    transport_mode: "MANDI_POOLING",
+    status: "PENDING",
+    message: "Competitive institutional bidding for export grading.",
+    created_at: new Date(Date.now() - 3600000 * 2).toISOString()
+  },
+  {
+    id: 3,
     produce_id: 2,
     crop_name: "Tomato",
     buyer_id: 5,
@@ -122,9 +141,65 @@ const DEFAULT_BUYER_OFFERS = [
     proposed_pickup_date: "Today Evening",
     transport_mode: "MANDI_POOLING",
     status: "PENDING",
+    message: "Ready for instantaneous gate check-in and weighing.",
     created_at: new Date(Date.now() - 3600000 * 2).toISOString()
+  },
+  {
+    id: 4,
+    produce_id: 2,
+    crop_name: "Tomato",
+    buyer_id: 8,
+    buyer_name: "Sunil Shinde",
+    buyer_company: "Mother Dairy Safal Network",
+    buyer_phone: "+91 9820119284",
+    offered_price: 29.50,
+    offered_price_per_kg: 29.50,
+    quantity_requested: 1200,
+    quantity_requested_kg: 1200,
+    proposed_pickup_date: "Tomorrow Morning",
+    transport_mode: "BUYER_ARRANGED",
+    status: "PENDING",
+    message: "Fresh daily allotment for NCR & Pune distribution.",
+    created_at: new Date(Date.now() - 3600000 * 3).toISOString()
+  },
+  {
+    id: 5,
+    produce_id: 3,
+    crop_name: "Wheat",
+    buyer_id: 7,
+    buyer_name: "Harpreet Singh Dhillon",
+    buyer_company: "Adani Agri Fresh Logistics",
+    buyer_phone: "+91 9876543210",
+    offered_price: 35.50,
+    offered_price_per_kg: 35.50,
+    quantity_requested: 5000,
+    quantity_requested_kg: 5000,
+    proposed_pickup_date: "In 2 Days",
+    transport_mode: "BUYER_ARRANGED",
+    status: "PENDING",
+    message: "Bulk silo allocation with certified protein grade.",
+    created_at: new Date(Date.now() - 3600000 * 4).toISOString()
+  },
+  {
+    id: 6,
+    produce_id: 4,
+    crop_name: "Soybean",
+    buyer_id: 9,
+    buyer_name: "Kishore Varma",
+    buyer_company: "DeHaat Direct Kisan Sourcing",
+    buyer_phone: "+91 9845012345",
+    offered_price: 49.50,
+    offered_price_per_kg: 49.50,
+    quantity_requested: 3500,
+    quantity_requested_kg: 3500,
+    proposed_pickup_date: "Tomorrow",
+    transport_mode: "MANDI_POOLING",
+    status: "PENDING",
+    message: "Crushing plant requirement at Indore Central APMC.",
+    created_at: new Date(Date.now() - 3600000 * 5).toISOString()
   }
 ];
+
 
 const DEFAULT_TOKENS = [
   {
@@ -417,8 +492,8 @@ export const api = {
     return safeFetch(`${API_BASE}/matching/for-produce/${produceId}`, {}, () => {
       const produces = getLocalData('produces', DEFAULT_PRODUCES);
       const targetProduce = produces.find(p => p.id === Number(produceId)) || produces[0] || { asking_price: 26.50, quantity_kg: 2500, crop_name: 'Onion' };
-      const basePrice = targetProduce.expected_price_per_kg || targetProduce.asking_price || 26.50;
-      const targetQty = targetProduce.quantity_kg || targetProduce.total_quantity || 2500;
+      const basePrice = Number(targetProduce.expected_price_per_kg || targetProduce.asking_price || 26.50);
+      const targetQty = Number(targetProduce.quantity_kg || targetProduce.total_quantity || 2500);
 
       return [
         {
@@ -451,8 +526,8 @@ export const api = {
           buyer_rating: "4.8 ★",
           reputation_stars: 4.8,
           payment_speed: "Direct Bank UTR (T+0)",
-          match_score: 94,
-          overall_match_score: 94,
+          match_score: 95,
+          overall_match_score: 95,
           offered_price: Math.round((basePrice * 1.02) * 100) / 100,
           offered_price_per_kg: Math.round((basePrice * 1.02) * 100) / 100,
           quantity_requested: Math.min(targetQty, 3000),
@@ -470,10 +545,86 @@ export const api = {
           buyer_rating: "4.7 ★",
           reputation_stars: 4.7,
           payment_speed: "Same Day DBT",
-          match_score: 89,
-          overall_match_score: 89,
+          match_score: 92,
+          overall_match_score: 92,
           offered_price: Math.round((basePrice * 0.98) * 100) / 100,
           offered_price_per_kg: Math.round((basePrice * 0.98) * 100) / 100,
+          quantity_requested: targetQty,
+          quantity_requested_kg: targetQty,
+          verified: true
+        },
+        {
+          buyer_id: 7,
+          buyer_name: "Harpreet Singh Dhillon",
+          buyer_company: "Adani Agri Fresh Logistics",
+          buyer_phone: "+91 9876543210",
+          feasibility_badge: "Cold Storage Ingress",
+          location: "Khanna Hub",
+          distance_km: 42.0,
+          buyer_rating: "4.9 ★",
+          reputation_stars: 4.9,
+          payment_speed: "Direct Escrow DBT",
+          match_score: 90,
+          overall_match_score: 90,
+          offered_price: Math.round((basePrice * 1.05) * 100) / 100,
+          offered_price_per_kg: Math.round((basePrice * 1.05) * 100) / 100,
+          quantity_requested: Math.max(targetQty, 4000),
+          quantity_requested_kg: Math.max(targetQty, 4000),
+          verified: true
+        },
+        {
+          buyer_id: 8,
+          buyer_name: "Sunil Shinde",
+          buyer_company: "Mother Dairy Safal Network",
+          buyer_phone: "+91 9820119284",
+          feasibility_badge: "Daily Retail Offtake",
+          location: "Mumbai Metro",
+          distance_km: 55.0,
+          buyer_rating: "4.8 ★",
+          reputation_stars: 4.8,
+          payment_speed: "Next-Day NEFT",
+          match_score: 88,
+          overall_match_score: 88,
+          offered_price: Math.round((basePrice * 1.01) * 100) / 100,
+          offered_price_per_kg: Math.round((basePrice * 1.01) * 100) / 100,
+          quantity_requested: targetQty,
+          quantity_requested_kg: targetQty,
+          verified: true
+        },
+        {
+          buyer_id: 10,
+          buyer_name: "Pooja Sharma",
+          buyer_company: "Zomato Hyperpure Sourcing",
+          buyer_phone: "+91 9899123488",
+          feasibility_badge: "Fast Turnaround Hub",
+          location: "Pune Industrial Park",
+          distance_km: 68.0,
+          buyer_rating: "4.8 ★",
+          reputation_stars: 4.8,
+          payment_speed: "Verified Escrow (T+0)",
+          match_score: 86,
+          overall_match_score: 86,
+          offered_price: Math.round((basePrice * 1.03) * 100) / 100,
+          offered_price_per_kg: Math.round((basePrice * 1.03) * 100) / 100,
+          quantity_requested: Math.min(targetQty, 2000),
+          quantity_requested_kg: Math.min(targetQty, 2000),
+          verified: true
+        },
+        {
+          buyer_id: 9,
+          buyer_name: "Kishore Varma",
+          buyer_company: "DeHaat Direct Kisan Sourcing",
+          buyer_phone: "+91 9845012345",
+          feasibility_badge: "Direct Aggregation Hub",
+          location: "Indore Central Mandi",
+          distance_km: 84.0,
+          buyer_rating: "4.7 ★",
+          reputation_stars: 4.7,
+          payment_speed: "Instant UPI DBT",
+          match_score: 84,
+          overall_match_score: 84,
+          offered_price: Math.round((basePrice * 0.99) * 100) / 100,
+          offered_price_per_kg: Math.round((basePrice * 0.99) * 100) / 100,
           quantity_requested: targetQty,
           quantity_requested_kg: targetQty,
           verified: true
@@ -481,6 +632,7 @@ export const api = {
       ];
     });
   },
+
 
 
   placeBuyerOffer: async (data) => {
