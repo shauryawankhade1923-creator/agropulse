@@ -415,43 +415,73 @@ export const api = {
   // Matching & Offers
   getMatchedBuyers: async (produceId) => {
     return safeFetch(`${API_BASE}/matching/for-produce/${produceId}`, {}, () => {
+      const produces = getLocalData('produces', DEFAULT_PRODUCES);
+      const targetProduce = produces.find(p => p.id === Number(produceId)) || produces[0] || { asking_price: 26.50, quantity_kg: 2500, crop_name: 'Onion' };
+      const basePrice = targetProduce.expected_price_per_kg || targetProduce.asking_price || 26.50;
+      const targetQty = targetProduce.quantity_kg || targetProduce.total_quantity || 2500;
+
       return [
         {
           buyer_id: 4,
           buyer_name: "Rajesh Aggarwal",
           buyer_company: "Reliance Retail Agro Hub",
           buyer_phone: "+91 9822019283",
-          match_score: 98,
-          offered_price: 27.50,
-          verified: true,
+          feasibility_badge: "Direct APMC Gate Ingress",
+          location: "Nashik Hub",
+          distance_km: 14.5,
+          buyer_rating: "4.9 ★",
           reputation_stars: 4.9,
-          distance_km: 14.5
+          payment_speed: "Instant DBT (T+0)",
+          match_score: 98,
+          overall_match_score: 98,
+          offered_price: Math.round((basePrice * 1.04) * 100) / 100,
+          offered_price_per_kg: Math.round((basePrice * 1.04) * 100) / 100,
+          quantity_requested: targetQty,
+          quantity_requested_kg: targetQty,
+          verified: true
         },
         {
           buyer_id: 5,
           buyer_name: "Vikram Mehta",
           buyer_company: "BigBasket Direct Sourcing",
           buyer_phone: "+91 9833091823",
-          match_score: 94,
-          offered_price: 28.00,
-          verified: true,
+          feasibility_badge: "Farmgate Collection",
+          location: "Pimpalgaon Yard",
+          distance_km: 22.0,
+          buyer_rating: "4.8 ★",
           reputation_stars: 4.8,
-          distance_km: 22.0
+          payment_speed: "Direct Bank UTR (T+0)",
+          match_score: 94,
+          overall_match_score: 94,
+          offered_price: Math.round((basePrice * 1.02) * 100) / 100,
+          offered_price_per_kg: Math.round((basePrice * 1.02) * 100) / 100,
+          quantity_requested: Math.min(targetQty, 3000),
+          quantity_requested_kg: Math.min(targetQty, 3000),
+          verified: true
         },
         {
           buyer_id: 6,
           buyer_name: "Amit Deshmukh",
           buyer_company: "ITC e-Choupal Procurement",
           buyer_phone: "+91 9811902811",
-          match_score: 89,
-          offered_price: 26.80,
-          verified: true,
+          feasibility_badge: "Bulk Mandi Weighbridge",
+          location: "Lasalgaon Mandi",
+          distance_km: 35.0,
+          buyer_rating: "4.7 ★",
           reputation_stars: 4.7,
-          distance_km: 35.0
+          payment_speed: "Same Day DBT",
+          match_score: 89,
+          overall_match_score: 89,
+          offered_price: Math.round((basePrice * 0.98) * 100) / 100,
+          offered_price_per_kg: Math.round((basePrice * 0.98) * 100) / 100,
+          quantity_requested: targetQty,
+          quantity_requested_kg: targetQty,
+          verified: true
         }
       ];
     });
   },
+
 
   placeBuyerOffer: async (data) => {
     return safeFetch(`${API_BASE}/matching/offer`, {

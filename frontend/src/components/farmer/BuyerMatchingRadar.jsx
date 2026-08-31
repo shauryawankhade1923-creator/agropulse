@@ -311,8 +311,9 @@ export default function BuyerMatchingRadar({ selectedProduceId, onBookSlotForPro
                       </div>
                       <div className="flex items-center justify-between space-x-4">
                         <span>Max Batch:</span>
-                        <strong className="text-slate-200 font-mono">{buyer.quantity_requested_kg.toLocaleString()} kg</strong>
+                        <strong className="text-slate-200 font-mono">{(buyer.quantity_requested_kg || buyer.quantity_requested || 2500).toLocaleString()} kg</strong>
                       </div>
+
                     </div>
                   </div>
 
