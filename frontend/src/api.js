@@ -1521,9 +1521,10 @@ export const api = {
           ripeness: "Optimal Table Ripe (8-10 Days Shelf-Life)",
           moisture: 10.8,
           multiplier: 1.14,
+          adjustment_pct: 14,
           agmark_summary: "AGMARK Special Grade • Export Quality",
           reasoning: "High skin tautness, uniform crimson red coloring, 0.4% minor blemishes, optimal internal pulp firmness.",
-          scores: { surface_integrity: 98, color_uniformity: 96, size_conformity: 97, skin_blemish_ratio: 0.4 }
+          scores: { surface_integrity: 98, color_uniformity: 96, size_conformity: 97, size_consistency: 97, skin_blemish_ratio: 0.4 }
         },
         Onion: {
           fruit: "Onion",
@@ -1536,9 +1537,10 @@ export const api = {
           ripeness: "Fully Cured & Dry Neck (6 Months Storage Ready)",
           moisture: 9.5,
           multiplier: 1.15,
+          adjustment_pct: 15,
           agmark_summary: "AGMARK Extra Special Grade • Zero Sprouting",
           reasoning: "Thick parchment papery outer scales, compact root plate, zero black mold spores, perfectly dry tight neck.",
-          scores: { surface_integrity: 99, color_uniformity: 97, size_conformity: 98, skin_blemish_ratio: 0.2 }
+          scores: { surface_integrity: 99, color_uniformity: 97, size_conformity: 98, size_consistency: 98, skin_blemish_ratio: 0.2 }
         },
         Apple: {
           fruit: "Apple",
@@ -1551,9 +1553,10 @@ export const api = {
           ripeness: "Tree-Ripened Crisp (14-18 Days Cold Store)",
           moisture: 11.4,
           multiplier: 1.12,
+          adjustment_pct: 12,
           agmark_summary: "AGMARK Grade A Premium Fresh Fruit",
           reasoning: "Deep red striping over 85% surface area, crisp flesh density, zero bruising, uniform caliber 75-80mm.",
-          scores: { surface_integrity: 97, color_uniformity: 95, size_conformity: 96, skin_blemish_ratio: 0.8 }
+          scores: { surface_integrity: 97, color_uniformity: 95, size_conformity: 96, size_consistency: 96, skin_blemish_ratio: 0.8 }
         },
         Banana: {
           fruit: "Banana",
@@ -1566,9 +1569,10 @@ export const api = {
           ripeness: "Stage 4 (Creamy Yellow Green Neck)",
           moisture: 12.1,
           multiplier: 1.10,
+          adjustment_pct: 10,
           agmark_summary: "AGMARK Super Grade • Uniform Hands",
           reasoning: "Clean crown cut, unblemished finger length > 18cm, zero crown rot, optimal sugar-to-starch conversion index.",
-          scores: { surface_integrity: 96, color_uniformity: 94, size_conformity: 95, skin_blemish_ratio: 1.1 }
+          scores: { surface_integrity: 96, color_uniformity: 94, size_conformity: 95, size_consistency: 95, skin_blemish_ratio: 1.1 }
         },
         Mango: {
           fruit: "Mango",
@@ -1581,9 +1585,10 @@ export const api = {
           ripeness: "Semi-Ripe Table Sweet (High Brix 18.5°)",
           moisture: 11.0,
           multiplier: 1.22,
+          adjustment_pct: 22,
           agmark_summary: "AGMARK Export Quality • GI Certified",
           reasoning: "Golden-saffron skin flush, intense sweet aroma, zero spongy tissue, flawless shape and lenticel development.",
-          scores: { surface_integrity: 99, color_uniformity: 98, size_conformity: 99, skin_blemish_ratio: 0.1 }
+          scores: { surface_integrity: 99, color_uniformity: 98, size_conformity: 99, size_consistency: 99, skin_blemish_ratio: 0.1 }
         },
         Potato: {
           fruit: "Potato",
@@ -1596,9 +1601,10 @@ export const api = {
           ripeness: "Mature Skin Set (Zero Greening)",
           moisture: 13.2,
           multiplier: 1.04,
+          adjustment_pct: 4,
           agmark_summary: "AGMARK Grade B Standard Quality",
           reasoning: "Sound skin texture, shallow eyes, zero solanine greening, slight surface soil adhering (within standard 1.5% tolerance).",
-          scores: { surface_integrity: 91, color_uniformity: 88, size_conformity: 90, skin_blemish_ratio: 2.2 }
+          scores: { surface_integrity: 91, color_uniformity: 88, size_conformity: 90, size_consistency: 90, skin_blemish_ratio: 2.2 }
         }
       };
 
@@ -1620,12 +1626,15 @@ export const api = {
         ripeness_stage: info.ripeness,
         estimated_moisture_pct: info.moisture,
         price_multiplier: info.multiplier,
+        suggested_price_adjustment_pct: info.adjustment_pct,
         agmark_standard_summary: info.agmark_summary,
         classification_reasoning: info.reasoning,
+        inspection_notes: info.reasoning,
         visual_scores: info.scores,
         analyzed_image_base64: (payload && payload.image_base64) || null,
         agmark_certified: true,
-        recommended_price_boost: `+${Math.round((info.multiplier - 1) * 100)}%`,
+        recommended_price_boost: `+${info.adjustment_pct}%`,
+        defects_detected: [],
         detected_defects: []
       };
     });
@@ -1639,6 +1648,7 @@ export const api = {
           crop_name: "Tomato",
           fruit_category: "VEGETABLE",
           title: "Tomato (Abhinav Hybrid)",
+          thumbnail_icon: "🍅",
           variety: "Abhinav Hybrid",
           expected_grade: "A",
           score: 97,
@@ -1649,6 +1659,7 @@ export const api = {
           crop_name: "Onion",
           fruit_category: "VEGETABLE",
           title: "Onion (Nashik Red Garwa)",
+          thumbnail_icon: "🧅",
           variety: "Nashik Red Garwa",
           expected_grade: "A",
           score: 98,
@@ -1659,6 +1670,7 @@ export const api = {
           crop_name: "Apple",
           fruit_category: "FRUIT",
           title: "Apple (Himachal Royal Gala)",
+          thumbnail_icon: "🍎",
           variety: "Himachal Royal Gala",
           expected_grade: "A",
           score: 97,
@@ -1669,6 +1681,7 @@ export const api = {
           crop_name: "Banana",
           fruit_category: "FRUIT",
           title: "Banana (Grand Naine G9)",
+          thumbnail_icon: "🍌",
           variety: "Grand Naine G9",
           expected_grade: "A",
           score: 96,
@@ -1679,6 +1692,7 @@ export const api = {
           crop_name: "Mango",
           fruit_category: "FRUIT",
           title: "Mango (Ratnagiri Alphonso)",
+          thumbnail_icon: "🥭",
           variety: "Ratnagiri Alphonso",
           expected_grade: "A",
           score: 99,
@@ -1689,6 +1703,7 @@ export const api = {
           crop_name: "Potato",
           fruit_category: "VEGETABLE",
           title: "Potato (Kufri Jyoti)",
+          thumbnail_icon: "🥔",
           variety: "Kufri Jyoti",
           expected_grade: "B",
           score: 89,
@@ -1697,6 +1712,7 @@ export const api = {
       ];
     });
   },
+
 
 
   // AI CCTV Queue Detection
