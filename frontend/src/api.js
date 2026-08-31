@@ -490,16 +490,20 @@ export const api = {
       body: JSON.stringify(data),
     }, () => {
       const offers = getLocalData('buyer_offers', DEFAULT_BUYER_OFFERS);
+      const rate = Number(data.offered_price || data.offered_price_per_kg || 25);
+      const qty = Number(data.quantity_requested || data.quantity_requested_kg || 1000);
       const newOffer = {
         id: Date.now(),
-        produce_id: data.produce_id,
+        produce_id: Number(data.produce_id),
         crop_name: data.crop_name || "Produce",
         buyer_id: data.buyer_id || 4,
-        buyer_name: "Rajesh Aggarwal",
-        buyer_company: "Reliance Retail Agro Hub",
+        buyer_name: data.buyer_name || "Rajesh Aggarwal",
+        buyer_company: data.buyer_company || "Reliance Retail Agro Hub",
         buyer_phone: "+91 9822019283",
-        offered_price: Number(data.offered_price),
-        quantity_requested: Number(data.quantity_requested),
+        offered_price: rate,
+        offered_price_per_kg: rate,
+        quantity_requested: qty,
+        quantity_requested_kg: qty,
         proposed_pickup_date: data.proposed_pickup_date || "Tomorrow Morning",
         transport_mode: data.transport_mode || "BUYER_ARRANGED",
         status: "PENDING",
@@ -507,6 +511,31 @@ export const api = {
       };
       setLocalData('buyer_offers', [newOffer, ...offers]);
       return newOffer;
+    });
+  },
+
+  getOffersForProduce: async (produceId) => {
+    return safeFetch(`${API_BASE}/matching/offers/produce/${produceId}`, {}, () => {
+      const offers = getLocalData('buyer_offers', DEFAULT_BUYER_OFFERS);
+      const filtered = offers.filter(o => !produceId || Number(o.produce_id) === Number(produceId));
+      if (filtered.length > 0) return filtered;
+      return [
+        {
+          id: 101,
+          produce_id: Number(produceId),
+          crop_name: "Produce Lot",
+          buyer_id: 4,
+          buyer_name: "Rajesh Aggarwal",
+          buyer_company: "Reliance Retail Agro Hub",
+          buyer_phone: "+91 9822019283",
+          offered_price: 27.50,
+          offered_price_per_kg: 27.50,
+          quantity_requested: 2500,
+          quantity_requested_kg: 2500,
+          status: "PENDING",
+          created_at: new Date().toISOString()
+        }
+      ];
     });
   },
 
@@ -521,6 +550,7 @@ export const api = {
       return getLocalData('buyer_offers', DEFAULT_BUYER_OFFERS);
     });
   },
+
 
   acceptBuyerOffer: async (offerId) => {
     return safeFetch(`${API_BASE}/matching/offer/${offerId}/accept`, { method: 'PUT' }, () => {
