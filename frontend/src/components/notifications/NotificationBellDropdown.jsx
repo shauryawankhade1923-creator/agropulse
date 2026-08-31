@@ -83,30 +83,33 @@ export default function NotificationBellDropdown({
     }
 
     if (setActiveTab) {
-      if (notif.event_type.includes('BID')) {
+      const evt = notif.event_type || '';
+      if (evt.includes('BID')) {
         setActiveTab('incoming-bids');
-      } else if (notif.event_type.includes('TOKEN')) {
+      } else if (evt.includes('TOKEN')) {
         setActiveTab('tokens');
-      } else if (notif.event_type.includes('QUEUE')) {
+      } else if (evt.includes('QUEUE')) {
         setActiveTab('queue');
-      } else if (notif.event_type.includes('PAYMENT')) {
+      } else if (evt.includes('PAYMENT')) {
         setActiveTab('payments');
-      } else if (notif.event_type.includes('FREIGHT')) {
+      } else if (evt.includes('FREIGHT')) {
         setActiveTab('freight');
       }
       setIsOpen(false);
     }
   };
 
-  const getEventIcon = (eventType, channel) => {
+  const getEventIcon = (eventType = '', channel = '') => {
+    const evt = eventType || '';
     if (channel === 'SMS') return <Smartphone className="w-3.5 h-3.5 text-blue-400" />;
     if (channel === 'WHATSAPP') return <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />;
-    if (eventType.includes('PAYMENT')) return <Coins className="w-3.5 h-3.5 text-emerald-400" />;
-    if (eventType.includes('TOKEN')) return <QrCode className="w-3.5 h-3.5 text-amber-400" />;
-    if (eventType.includes('QUEUE')) return <Scale className="w-3.5 h-3.5 text-blue-400" />;
-    if (eventType.includes('FREIGHT')) return <Truck className="w-3.5 h-3.5 text-purple-400" />;
+    if (evt.includes('PAYMENT')) return <Coins className="w-3.5 h-3.5 text-emerald-400" />;
+    if (evt.includes('TOKEN')) return <QrCode className="w-3.5 h-3.5 text-amber-400" />;
+    if (evt.includes('QUEUE')) return <Scale className="w-3.5 h-3.5 text-blue-400" />;
+    if (evt.includes('FREIGHT')) return <Truck className="w-3.5 h-3.5 text-purple-400" />;
     return <Bell className="w-3.5 h-3.5 text-slate-400" />;
   };
+
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -229,7 +232,7 @@ export default function NotificationBellDropdown({
                       </div>
 
                       <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-2 leading-tight font-sans">
-                        {notif.message_content.replace(/\*/g, '')}
+                        {(notif.message_content || '').replace(/\*/g, '')}
                       </p>
 
                       <div className="flex items-center justify-between text-[10px] text-slate-500 mt-1">

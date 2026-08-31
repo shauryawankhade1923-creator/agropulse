@@ -176,12 +176,20 @@ function setLocalData(key, data) {
 
 // Universal fetch with automatic failover
 async function safeFetch(url, options = {}, fallbackFn = null) {
+  const hasDedicatedBackend = Boolean(import.meta.env.VITE_API_URL) || 
+    (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'));
+
+  if (!hasDedicatedBackend && fallbackFn) {
+    return await fallbackFn();
+  }
+
   try {
     const res = await fetch(url, options);
-    if (res.ok) {
+    const contentType = res.headers.get('content-type') || '';
+    if (res.ok && contentType.includes('application/json')) {
       return await res.json();
     }
-    // If backend returned error status, try fallback
+    // If backend returned HTML (SPA rewrite) or error status, use fallback
     if (fallbackFn) return await fallbackFn();
     const errData = await res.json().catch(() => ({}));
     throw new Error(errData.detail || `Server returned ${res.status}`);
@@ -192,6 +200,7 @@ async function safeFetch(url, options = {}, fallbackFn = null) {
     throw err;
   }
 }
+
 
 export const api = {
   // AI Pricing & Queue
