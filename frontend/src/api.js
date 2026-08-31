@@ -781,19 +781,47 @@ export const api = {
     });
   },
 
+  getTokenById: async (tokenId) => {
+    return safeFetch(`${API_BASE}/procurement/token/id/${tokenId}`, {}, () => {
+      const tokens = getLocalData('tokens', DEFAULT_TOKENS);
+      const found = tokens.find(t => t.id === Number(tokenId));
+      if (found) return { ...found, quantity_kg: found.quantity_kg || found.quantity || 2500 };
+      return {
+        id: Number(tokenId) || 1,
+        token_number: "AP-2026-9901",
+        farmer_name: "Ramesh Patil",
+        farmer_phone: "7020975052",
+        crop_name: "Onion",
+        quantity: 2500,
+        quantity_kg: 2500,
+        center_id: 1,
+        center_name: "Nashik Main APMC Market Yard",
+        counter_id: 2,
+        assigned_counter: 2,
+        counter_name: "Counter #2 (Weighbridge Bay B)",
+        assigned_slot: "Today (10:00 AM - 12:00 PM)",
+        status: "BOOKED",
+        qr_code_payload: "APMC-TOKEN-AP-2026-9901-RAMESH-PATIL"
+      };
+    });
+  },
+
   getTokenByNumber: async (tokenNo) => {
     return safeFetch(`${API_BASE}/procurement/token/${tokenNo}`, {}, () => {
       const tokens = getLocalData('tokens', DEFAULT_TOKENS);
-      const found = tokens.find(t => t.token_number === tokenNo);
-      if (found) return found;
+      const found = tokens.find(t => t.token_number.toUpperCase() === tokenNo.toUpperCase());
+      if (found) return { ...found, quantity_kg: found.quantity_kg || found.quantity || 2500 };
       return {
         id: 99,
         token_number: tokenNo,
         farmer_name: "Ramesh Patil",
+        farmer_phone: "7020975052",
         crop_name: "Onion",
         quantity: 2500,
+        quantity_kg: 2500,
         status: "ARRIVED",
         counter_name: "Counter #2",
+        assigned_counter: 2,
         qr_code_payload: `APMC-${tokenNo}`
       };
     });
@@ -809,23 +837,72 @@ export const api = {
   },
 
   // Live Queue Board
-  getLiveQueueBoard: async () => {
-    return safeFetch(`${API_BASE}/queue/center/1/live-board`, {}, () => {
+  getLiveQueueBoard: async (centerId = 1) => {
+    return safeFetch(`${API_BASE}/queue/center/${centerId}/live-board`, {}, () => {
+      const tokens = getLocalData('tokens', DEFAULT_TOKENS);
+      const activeToken = tokens[0] || {
+        id: 1,
+        token_number: "AP-2026-9901",
+        farmer_name: "Ramesh Patil",
+        crop_name: "Onion",
+        quantity_kg: 2500
+      };
+
       return {
-        center_id: 1,
+        center_id: Number(centerId),
         center_name: "Nashik Main APMC Market Yard",
-        active_counters: [
-          { id: 1, counter_number: 1, status: "ACTIVE", current_token: "AP-2026-9884", driver_name: "Suresh Chavan", wait_min: 6 },
-          { id: 2, counter_number: 2, status: "ACTIVE", current_token: "AP-2026-9901", driver_name: "Ramesh Patil", wait_min: 10 },
-          { id: 3, counter_number: 3, status: "ACTIVE", current_token: "AP-2026-9915", driver_name: "Ganesh Shinde", wait_min: 14 }
+        processing_count: 2,
+        waiting_count: 3,
+        completed_count: 14,
+        average_throughput_mins: 8.5,
+        current_calling: {
+          token_id: activeToken.id,
+          token_number: activeToken.token_number || "AP-2026-9901",
+          farmer_name: activeToken.farmer_name || "Ramesh Patil",
+          crop: activeToken.crop_name || "Onion",
+          quantity_kg: activeToken.quantity_kg || 2500,
+          assigned_counter: 2,
+          estimated_wait_mins: 8,
+          status: "IN_INSPECTION"
+        },
+        in_process: [
+          {
+            token_id: activeToken.id,
+            token_number: activeToken.token_number || "AP-2026-9901",
+            assigned_counter: 2,
+            farmer_name: activeToken.farmer_name || "Ramesh Patil",
+            crop: activeToken.crop_name || "Onion",
+            quantity_kg: activeToken.quantity_kg || 2500,
+            status: "WEIGHMENT"
+          },
+          {
+            token_id: 2,
+            token_number: "AP-2026-9884",
+            assigned_counter: 1,
+            farmer_name: "Balasaheb Kadam",
+            crop: "Tomato",
+            quantity_kg: 1200,
+            status: "INSPECTION"
+          }
         ],
-        queue_items: [
-          { id: 1, token_number: "AP-2026-9901", farmer_name: "Ramesh Patil", crop: "Onion (2,500 kg)", stage: "INSPECTION", counter: 2, wait_est: "~8m" },
-          { id: 2, token_number: "AP-2026-9920", farmer_name: "Balasaheb Kadam", crop: "Tomato (1,200 kg)", stage: "WEIGHMENT", counter: 1, wait_est: "~14m" },
-          { id: 3, token_number: "AP-2026-9925", farmer_name: "Santosh More", crop: "Soybean (3,000 kg)", stage: "GATE_CHECKIN", counter: 3, wait_est: "~22m" }
-        ],
-        total_vehicles_in_yard: 12,
-        average_throughput_mins: 8.5
+        waiting: [
+          {
+            token_id: 3,
+            token_number: "AP-2026-9915",
+            farmer_name: "Ganesh Shinde",
+            crop: "Wheat",
+            quantity_kg: 5000,
+            estimated_wait_mins: 14
+          },
+          {
+            token_id: 4,
+            token_number: "AP-2026-9928",
+            farmer_name: "Santosh More",
+            crop: "Soybean",
+            quantity_kg: 3500,
+            estimated_wait_mins: 22
+          }
+        ]
       };
     });
   },
@@ -836,9 +913,10 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     }, () => {
-      return { status: "success", message: `Token advanced to ${data.new_stage || 'NEXT_STAGE'}` };
+      return { status: "success", message: `Token #${data.token_id || 1} advanced to ${data.new_stage || 'NEXT_STAGE'}` };
     });
   },
+
 
   // Smart Freight & Logistics Pooling
   getLogisticsPools: async () => {

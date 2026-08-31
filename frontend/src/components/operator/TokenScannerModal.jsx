@@ -79,20 +79,38 @@ export default function TokenScannerModal({ isOpen, onClose, onTokenVerified }) 
                 type="text"
                 value={tokenInput}
                 onChange={(e) => setTokenInput(e.target.value)}
-                placeholder="e.g. AP-2026-0247"
+                placeholder="e.g. AP-2026-9901"
                 className="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white font-mono uppercase focus:outline-none focus:border-slate-700"
                 required
               />
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-750 text-white rounded-lg font-medium border border-slate-700 disabled:opacity-50 transition"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-750 text-white rounded-lg font-medium border border-slate-700 disabled:opacity-50 transition cursor-pointer"
               >
                 {loading ? '...' : 'Verify'}
               </button>
             </div>
+            {/* Quick Demo Tokens */}
+            <div className="flex items-center space-x-1.5 mt-2">
+              <span className="text-[10px] text-slate-500 font-medium">Quick Pick:</span>
+              {['AP-2026-9901', 'AP-2026-9884', 'AP-2026-9915'].map((tok) => (
+                <button
+                  key={tok}
+                  type="button"
+                  onClick={() => {
+                    setTokenInput(tok);
+                    api.getTokenByNumber(tok).then(setVerifiedToken).catch(() => {});
+                  }}
+                  className="px-2 py-0.5 rounded bg-slate-950 hover:bg-slate-800 text-[10px] font-mono text-emerald-400 border border-slate-800 transition cursor-pointer"
+                >
+                  {tok}
+                </button>
+              ))}
+            </div>
           </div>
         </form>
+
 
         {error && (
           <div className="p-3 bg-slate-950 border border-rose-900 rounded-lg text-rose-400 text-xs flex items-center space-x-2">
