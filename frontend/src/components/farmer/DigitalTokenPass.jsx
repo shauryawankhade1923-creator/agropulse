@@ -74,16 +74,23 @@ export default function DigitalTokenPass() {
   };
 
   const getStageStep = (status) => {
-    switch (status) {
+    switch (status?.toUpperCase()) {
       case 'BOOKED': return 1;
-      case 'CHECKED_IN': return 2;
-      case 'IN_INSPECTION': return 3;
-      case 'WEIGHING': return 4;
+      case 'CHECKED_IN': 
+      case 'CHECK-IN':
+      case 'ARRIVED': return 2;
+      case 'IN_INSPECTION': 
+      case 'INSPECTION': return 3;
+      case 'WEIGHING': 
+      case 'WEIGHMENT': return 4;
       case 'APPROVED':
+      case 'SETTLED':
+      case 'DISBURSED':
       case 'COMPLETED': return 5;
       default: return 1;
     }
   };
+
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -300,22 +307,24 @@ export default function DigitalTokenPass() {
                     {['Booked', 'Check-In', 'Inspection', 'Weighing', 'Settled'].map((stage, idx) => {
                       const stepNum = idx + 1;
                       const currentStep = getStageStep(activeToken.status);
-                      const isPast = currentStep >= stepNum;
-                      const isCurrent = currentStep === stepNum;
+                      const isSettledAll = currentStep >= 5;
+                      const isPassed = currentStep >= stepNum;
+                      const isCurrent = !isSettledAll && currentStep === stepNum;
+                      const isCompleted = isSettledAll || (isPassed && !isCurrent);
 
                       return (
                         <div key={stage} className="relative z-10 flex flex-col items-center text-center">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs transition ${
-                            isCurrent
-                              ? 'bg-amber-500 text-slate-950 ring-2 ring-amber-500/20'
-                              : (isPast
-                                  ? 'bg-emerald-600 text-white'
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs transition shadow-sm ${
+                            isCompleted
+                              ? 'bg-emerald-600 text-white ring-2 ring-emerald-500/30'
+                              : (isCurrent
+                                  ? 'bg-amber-500 text-slate-950 ring-2 ring-amber-500/40 animate-pulse'
                                   : 'bg-slate-950 text-slate-600 border border-slate-800')
                           }`}>
-                            {isPast && !isCurrent ? <CheckCircle2 className="w-3.5 h-3.5" /> : stepNum}
+                            {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : stepNum}
                           </div>
-                          <span className={`text-[10px] font-medium mt-1.5 ${
-                            isCurrent ? 'text-amber-400 font-semibold' : (isPast ? 'text-emerald-400' : 'text-slate-600')
+                          <span className={`text-[10px] font-medium mt-1.5 transition ${
+                            isCompleted ? 'text-emerald-400 font-semibold' : (isCurrent ? 'text-amber-400 font-bold' : 'text-slate-600')
                           }`}>
                             {stage}
                           </span>
@@ -323,6 +332,7 @@ export default function DigitalTokenPass() {
                       );
                     })}
                   </div>
+
                 </div>
 
               </div>

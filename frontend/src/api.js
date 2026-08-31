@@ -913,9 +913,76 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     }, () => {
-      return { status: "success", message: `Token #${data.token_id || 1} advanced to ${data.new_stage || 'NEXT_STAGE'}` };
+      const tokens = getLocalData('tokens', DEFAULT_TOKENS);
+      const targetId = Number(data.token_id || 1);
+      const stage = (data.new_stage || 'COMPLETED').toUpperCase();
+      
+      const updated = tokens.map(t => {
+        if (t.id === targetId || t.token_number === data.token_number || tokens.length === 1) {
+          return {
+            ...t,
+            status: stage === 'COMPLETED' ? 'COMPLETED' : (stage === 'SETTLED' ? 'COMPLETED' : stage),
+            assigned_counter: data.counter_number || t.assigned_counter || 2,
+            measured_weight_kg: data.measured_weight_kg || t.quantity_kg || 2500,
+            final_grade: data.final_grade || 'Grade A',
+            final_rate_per_kg: data.final_rate_per_kg || 26.50,
+            disbursed_amount: Math.round(((data.measured_weight_kg || 2500) * (data.final_rate_per_kg || 26.50) * 0.99) * 100) / 100
+          };
+        }
+        return t;
+      });
+      setLocalData('tokens', updated);
+
+      // If completed, also append to payments DBT ledger and send SMS notification!
+      if (stage === 'COMPLETED' || stage === 'SETTLED' || stage === 'APPROVED') {
+        const payments = getLocalData('payments', DEFAULT_PAYMENTS);
+        const gross = Math.round((Number(data.measured_weight_kg || 2500) * Number(data.final_rate_per_kg || 26.50)) * 100) / 100;
+        const cess = Math.round((gross * 0.01) * 100) / 100;
+        const net = Math.round((gross - cess) * 100) / 100;
+        const newPayment = {
+          id: Date.now(),
+          farmer_id: 1,
+          settlement_id: `DBT-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+          produce_name: "Onion (Grade A)",
+          crop_name: "Onion",
+          farmer_name: "Ramesh Patil",
+          buyer_name: "Reliance Retail Agro Hub",
+          quantity_kg: Number(data.measured_weight_kg || 2500),
+          measured_weight_kg: Number(data.measured_weight_kg || 2500),
+          gross_amount: gross,
+          mandi_cess_deducted: cess,
+          mandi_cess_deduction: cess,
+          net_disbursed: net,
+          amount: net,
+          bank_name: "State Bank of India (SBIN-XXXX-4819)",
+          utr_number: `UTR${Date.now().toString().slice(-10)}`,
+          status: "DISBURSED",
+          paid_at: new Date().toISOString(),
+          payment_date: "Just now"
+        };
+        setLocalData('payments', [newPayment, ...payments]);
+
+        const notifs = getLocalData('notifications', DEFAULT_NOTIFICATIONS);
+        const newNotif = {
+          id: Date.now(),
+          channel: "SMS",
+          recipient_phone: "7020975052",
+          recipient_name: "Ramesh Patil",
+          event_type: "PAYMENT_SETTLED",
+          title: "💰 DBT Disbursed to Bank Account",
+          message_content: `AgroPulse Mandi: Rs.${net.toLocaleString('en-IN')} has been directly credited to your SBI account via DBT (UTR: ${newPayment.utr_number}). Certified lot #${targetId}.`,
+          status: "DELIVERED",
+          is_read: false,
+          reference_id: `DBT-${Date.now().toString().slice(-4)}`,
+          created_at: new Date().toISOString()
+        };
+        setLocalData('notifications', [newNotif, ...notifs]);
+      }
+
+      return { status: "success", message: `Token #${targetId} advanced to ${stage}` };
     });
   },
+
 
 
   // Smart Freight & Logistics Pooling
