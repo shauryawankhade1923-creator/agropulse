@@ -1357,17 +1357,128 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload instanceof FormData ? {} : payload)
     }, () => {
-      const cropName = (payload && payload.crop_name) || "Onion";
+      let requestedCrop = (payload && (payload.crop_name || payload.sample_key)) || "Tomato";
+      if (typeof requestedCrop === 'string' && requestedCrop.includes('_')) {
+        requestedCrop = requestedCrop.split('_')[0];
+      }
+      
+      const cropTaxonomy = {
+        Tomato: {
+          fruit: "Tomato",
+          variety: "Abhinav Hybrid (Table Ripe)",
+          icon: "🍅",
+          category: "SOLANACEOUS VEGETABLE",
+          grade: "A",
+          score: 97.4,
+          confidence: 98.6,
+          ripeness: "Optimal Table Ripe (8-10 Days Shelf-Life)",
+          moisture: 10.8,
+          multiplier: 1.14,
+          agmark_summary: "AGMARK Special Grade • Export Quality",
+          reasoning: "High skin tautness, uniform crimson red coloring, 0.4% minor blemishes, optimal internal pulp firmness.",
+          scores: { surface_integrity: 98, color_uniformity: 96, size_conformity: 97, skin_blemish_ratio: 0.4 }
+        },
+        Onion: {
+          fruit: "Onion",
+          variety: "Nashik Red Garwa (Export Quality)",
+          icon: "🧅",
+          category: "BULB ALLIUM VEGETABLE",
+          grade: "A",
+          score: 98.2,
+          confidence: 99.1,
+          ripeness: "Fully Cured & Dry Neck (6 Months Storage Ready)",
+          moisture: 9.5,
+          multiplier: 1.15,
+          agmark_summary: "AGMARK Extra Special Grade • Zero Sprouting",
+          reasoning: "Thick parchment papery outer scales, compact root plate, zero black mold spores, perfectly dry tight neck.",
+          scores: { surface_integrity: 99, color_uniformity: 97, size_conformity: 98, skin_blemish_ratio: 0.2 }
+        },
+        Apple: {
+          fruit: "Apple",
+          variety: "Himachal Royal Gala (Red Flush)",
+          icon: "🍎",
+          category: "POMACEOUS FRUIT",
+          grade: "A",
+          score: 96.8,
+          confidence: 98.2,
+          ripeness: "Tree-Ripened Crisp (14-18 Days Cold Store)",
+          moisture: 11.4,
+          multiplier: 1.12,
+          agmark_summary: "AGMARK Grade A Premium Fresh Fruit",
+          reasoning: "Deep red striping over 85% surface area, crisp flesh density, zero bruising, uniform caliber 75-80mm.",
+          scores: { surface_integrity: 97, color_uniformity: 95, size_conformity: 96, skin_blemish_ratio: 0.8 }
+        },
+        Banana: {
+          fruit: "Banana",
+          variety: "Grand Naine / Robusta (G9)",
+          icon: "🍌",
+          category: "TROPICAL MUSACEAE FRUIT",
+          grade: "A",
+          score: 95.9,
+          confidence: 97.8,
+          ripeness: "Stage 4 (Creamy Yellow Green Neck)",
+          moisture: 12.1,
+          multiplier: 1.10,
+          agmark_summary: "AGMARK Super Grade • Uniform Hands",
+          reasoning: "Clean crown cut, unblemished finger length > 18cm, zero crown rot, optimal sugar-to-starch conversion index.",
+          scores: { surface_integrity: 96, color_uniformity: 94, size_conformity: 95, skin_blemish_ratio: 1.1 }
+        },
+        Mango: {
+          fruit: "Mango",
+          variety: "Ratnagiri Alphonso (GI Tagged)",
+          icon: "🥭",
+          category: "TROPICAL DRUPE FRUIT",
+          grade: "A",
+          score: 99.1,
+          confidence: 99.4,
+          ripeness: "Semi-Ripe Table Sweet (High Brix 18.5°)",
+          moisture: 11.0,
+          multiplier: 1.22,
+          agmark_summary: "AGMARK Export Quality • GI Certified",
+          reasoning: "Golden-saffron skin flush, intense sweet aroma, zero spongy tissue, flawless shape and lenticel development.",
+          scores: { surface_integrity: 99, color_uniformity: 98, size_conformity: 99, skin_blemish_ratio: 0.1 }
+        },
+        Potato: {
+          fruit: "Potato",
+          variety: "Kufri Jyoti (Table & Chip Grade)",
+          icon: "🥔",
+          category: "TUBER VEGETABLE",
+          grade: "B",
+          score: 89.5,
+          confidence: 96.4,
+          ripeness: "Mature Skin Set (Zero Greening)",
+          moisture: 13.2,
+          multiplier: 1.04,
+          agmark_summary: "AGMARK Grade B Standard Quality",
+          reasoning: "Sound skin texture, shallow eyes, zero solanine greening, slight surface soil adhering (within standard 1.5% tolerance).",
+          scores: { surface_integrity: 91, color_uniformity: 88, size_conformity: 90, skin_blemish_ratio: 2.2 }
+        }
+      };
+
+      // Match crop or fallback to Tomato
+      const matched = Object.keys(cropTaxonomy).find(k => k.toLowerCase() === requestedCrop.toLowerCase()) || "Tomato";
+      const info = cropTaxonomy[matched];
+
       return {
-        detected_crop: cropName,
-        grade: "Grade A",
-        confidence: 97.8,
-        color_uniformity: "96.4%",
-        skin_blemish_ratio: "1.2%",
-        firmness_index: "9.2/10",
-        moisture_estimation: "10.4%",
+        detected_fruit_or_crop: info.fruit,
+        detected_crop: info.fruit,
+        variety_detected: info.variety,
+        produce_icon: info.icon,
+        fruit_category: info.category,
+        fruit_detection_confidence: info.confidence,
+        predicted_grade: info.grade,
+        grade: `Grade ${info.grade}`,
+        overall_quality_score: info.score,
+        confidence: info.confidence,
+        ripeness_stage: info.ripeness,
+        estimated_moisture_pct: info.moisture,
+        price_multiplier: info.multiplier,
+        agmark_standard_summary: info.agmark_summary,
+        classification_reasoning: info.reasoning,
+        visual_scores: info.scores,
+        analyzed_image_base64: (payload && payload.image_base64) || null,
         agmark_certified: true,
-        recommended_price_boost: "+8.5%",
+        recommended_price_boost: `+${Math.round((info.multiplier - 1) * 100)}%`,
         detected_defects: []
       };
     });
@@ -1376,12 +1487,70 @@ export const api = {
   getSampleSpecimens: async () => {
     return safeFetch(`${API_BASE}/ai/sample-specimens`, {}, () => {
       return [
-        { crop_name: "Onion", variety: "Nashik Red", expected_grade: "Grade A", sample_url: "/specimens/onion_grade_a.jpg" },
-        { crop_name: "Tomato", variety: "Abhinav Hybrid", expected_grade: "Grade A", sample_url: "/specimens/tomato_grade_a.jpg" },
-        { crop_name: "Potato", variety: "Kufri Jyoti", expected_grade: "Grade B", sample_url: "/specimens/potato_grade_b.jpg" }
+        {
+          key: "tomato_grade_a",
+          crop_name: "Tomato",
+          fruit_category: "VEGETABLE",
+          title: "Tomato (Abhinav Hybrid)",
+          variety: "Abhinav Hybrid",
+          expected_grade: "A",
+          score: 97,
+          description: "Smooth taut skin, uniform crimson red coloring, high firmness, 0.4% minor blemishes."
+        },
+        {
+          key: "onion_grade_a",
+          crop_name: "Onion",
+          fruit_category: "VEGETABLE",
+          title: "Onion (Nashik Red Garwa)",
+          variety: "Nashik Red Garwa",
+          expected_grade: "A",
+          score: 98,
+          description: "Tight dry neck, intact papery pink-red scales, zero sprouting, cured for 6 months storage."
+        },
+        {
+          key: "apple_grade_a",
+          crop_name: "Apple",
+          fruit_category: "FRUIT",
+          title: "Apple (Himachal Royal Gala)",
+          variety: "Himachal Royal Gala",
+          expected_grade: "A",
+          score: 97,
+          description: "Vibrant deep red striping over 85% surface, high crispness density, zero bruising."
+        },
+        {
+          key: "banana_grade_a",
+          crop_name: "Banana",
+          fruit_category: "FRUIT",
+          title: "Banana (Grand Naine G9)",
+          variety: "Grand Naine G9",
+          expected_grade: "A",
+          score: 96,
+          description: "Clean crown cut, unblemished finger length > 18cm, optimum yellow index."
+        },
+        {
+          key: "mango_grade_a",
+          crop_name: "Mango",
+          fruit_category: "FRUIT",
+          title: "Mango (Ratnagiri Alphonso)",
+          variety: "Ratnagiri Alphonso",
+          expected_grade: "A",
+          score: 99,
+          description: "Golden-saffron skin blush, intense sweet aroma, zero spongy tissue, GI certified."
+        },
+        {
+          key: "potato_grade_b",
+          crop_name: "Potato",
+          fruit_category: "VEGETABLE",
+          title: "Potato (Kufri Jyoti)",
+          variety: "Kufri Jyoti",
+          expected_grade: "B",
+          score: 89,
+          description: "Firm table skin set, shallow eyes, zero solanine greening, slight surface earth."
+        }
       ];
     });
   },
+
 
   // AI CCTV Queue Detection
   detectQueueVision: async (payload) => {
