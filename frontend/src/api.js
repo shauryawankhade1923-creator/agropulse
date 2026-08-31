@@ -451,6 +451,19 @@ export const api = {
   getProduces: async (filters = {}) => {
     return safeFetch(`${API_BASE}/produce/`, {}, () => {
       let items = getLocalData('produces', DEFAULT_PRODUCES);
+      items = items.map(p => {
+        const rate = Number(p.expected_price_per_kg || p.asking_price || p.price_per_kg || 25);
+        const qty = Number(p.quantity_kg || p.available_quantity || p.total_quantity || 1000);
+        return {
+          ...p,
+          expected_price_per_kg: rate,
+          asking_price: rate,
+          price_per_kg: rate,
+          quantity_kg: qty,
+          available_quantity: qty,
+          total_quantity: qty
+        };
+      });
       if (filters.crop_name) {
         items = items.filter(p => p.crop_name.toLowerCase() === filters.crop_name.toLowerCase());
       }
@@ -465,19 +478,32 @@ export const api = {
       body: JSON.stringify(data),
     }, () => {
       const items = getLocalData('produces', DEFAULT_PRODUCES);
+      const askingRate = Number(data.expected_price_per_kg || data.asking_price || data.price_per_kg || 25);
+      const totalQty = Number(data.quantity_kg || data.total_quantity || data.available_quantity || 1000);
       const newProduce = {
         id: Date.now(),
         farmer_id: 1,
+        farmer_name: data.farmer_name || "Ramesh Patil",
         crop_name: data.crop_name || "Onion",
         variety: data.variety || "Local Hybrid",
-        total_quantity: Number(data.total_quantity || 1000),
-        available_quantity: Number(data.total_quantity || 1000),
+        total_quantity: totalQty,
+        available_quantity: totalQty,
+        quantity_kg: totalQty,
+        weight_kg: totalQty,
         unit: data.unit || "kg",
-        asking_price: Number(data.asking_price || 25),
+        asking_price: askingRate,
+        expected_price_per_kg: askingRate,
+        offered_price_per_kg: askingRate,
+        price_per_kg: askingRate,
         quality_grade: data.quality_grade || "Grade A",
         moisture_content: Number(data.moisture_content || 10),
         location: data.location || "Nashik APMC Catchment",
         notes: data.notes || "Harvested this morning, inspected with AI optical vision.",
+        ai_vision_verified: Boolean(data.ai_vision_verified),
+        ai_quality_score: data.ai_quality_score || 95.0,
+        ai_ripeness_stage: data.ai_ripeness_stage || 'Optimal Table Ripe',
+        ai_inspection_notes: data.ai_inspection_notes || data.notes || "Optimal grade",
+        image_url: data.image_url || null,
         status: "LISTED",
         created_at: new Date().toISOString()
       };
@@ -486,6 +512,7 @@ export const api = {
       return newProduce;
     });
   },
+
 
   // Matching & Offers
   getMatchedBuyers: async (produceId) => {

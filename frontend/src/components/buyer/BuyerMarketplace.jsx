@@ -59,11 +59,14 @@ export default function BuyerMarketplace() {
 
   const handleOpenBid = (p) => {
     setSelectedProduce(p);
-    setBidPrice(p.expected_price_per_kg);
-    setBidQty(p.quantity_kg);
+    const rate = Number(p.expected_price_per_kg || p.asking_price || p.price_per_kg || 25);
+    const qty = Number(p.quantity_kg || p.available_quantity || p.total_quantity || 1000);
+    setBidPrice(rate);
+    setBidQty(qty);
     setBidMessage('Direct logistics pickup arranged. Immediate escrow payout upon loading.');
     setBidSuccess(false);
   };
+
 
   const handleSubmitBid = async (e) => {
     e.preventDefault();
@@ -262,13 +265,13 @@ export default function BuyerMarketplace() {
         </div>
       )}
 
-      {/* Place Bid Modal */}
+      {/* Place Purchase Order Modal */}
       {selectedProduce && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 max-w-md w-full rounded-2xl p-6 space-y-4 shadow-2xl">
             <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-white">Place Purchase Bid</h3>
+                <h3 className="text-sm font-bold text-white">Place Purchase Order</h3>
                 <span className="text-[11px] text-slate-400">Lot #{selectedProduce.id} • {selectedProduce.crop_name}</span>
               </div>
               <button onClick={() => setSelectedProduce(null)} className="text-slate-500 hover:text-white text-sm">✕</button>
@@ -279,13 +282,13 @@ export default function BuyerMarketplace() {
                 <div className="w-12 h-12 rounded-full bg-emerald-950/80 border border-emerald-700 text-emerald-400 flex items-center justify-center mx-auto shadow-inner">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
-                <h4 className="text-base font-bold text-white">Bid Submitted to Farmer</h4>
+                <h4 className="text-base font-bold text-white">Purchase Order Sent to Farmer</h4>
                 <p className="text-xs text-slate-400 max-w-xs mx-auto">
-                  Farmer will receive your price offer and notification for acceptance and logistics pooling.
+                  Farmer will receive your direct procurement order and notification for instant deal lock and freight dispatch.
                 </p>
                 <button
                   onClick={() => setSelectedProduce(null)}
-                  className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-semibold"
+                  className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-semibold cursor-pointer"
                 >
                   Close
                 </button>
@@ -307,13 +310,15 @@ export default function BuyerMarketplace() {
                   </div>
                   <div className="flex justify-between text-slate-400">
                     <span className="font-sans">Farmer Asking Rate:</span>
-                    <strong className="text-slate-200 font-bold">₹{selectedProduce.expected_price_per_kg}/kg</strong>
+                    <strong className="text-emerald-400 font-bold text-sm">
+                      ₹{selectedProduce.expected_price_per_kg || selectedProduce.asking_price || selectedProduce.price_per_kg || 25}/kg
+                    </strong>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-400 mb-1 font-sans">Your Bid Rate (₹/kg)</label>
+                    <label className="block text-slate-400 mb-1 font-sans">Your Offered Rate (₹/kg)</label>
                     <input
                       type="number"
                       step="0.5"
@@ -347,23 +352,23 @@ export default function BuyerMarketplace() {
                 </div>
 
                 <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 text-right font-mono text-sm text-emerald-400">
-                  <span className="text-slate-500 font-sans text-xs mr-2">Total Bid Amount:</span>
-                  <strong>₹{(bidPrice * bidQty).toLocaleString('en-IN')}</strong>
+                  <span className="text-slate-500 font-sans text-xs mr-2">Total Order Value:</span>
+                  <strong>₹{((Number(bidPrice) || 0) * (Number(bidQty) || 0)).toLocaleString('en-IN')}</strong>
                 </div>
 
                 <div className="flex space-x-2 pt-2">
                   <button
                     type="button"
                     onClick={() => setSelectedProduce(null)}
-                    className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium"
+                    className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold shadow-lg"
+                    className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold shadow-lg cursor-pointer"
                   >
-                    Submit Purchase Bid
+                    Submit Purchase Order
                   </button>
                 </div>
               </form>
@@ -371,6 +376,7 @@ export default function BuyerMarketplace() {
           </div>
         </div>
       )}
+
 
       {/* Optical Assay Certificate Inspection Modal */}
       {inspectAssayProduce && (
