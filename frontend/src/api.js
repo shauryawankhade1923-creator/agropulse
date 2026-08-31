@@ -753,9 +753,48 @@ export const api = {
   getProcurementCenters: async () => {
     return safeFetch(`${API_BASE}/procurement/centers`, {}, () => {
       return [
-        { id: 1, name: "Nashik Main APMC Market Yard", district: "Nashik", state: "Maharashtra", lat: 19.9975, lon: 73.7898 },
-        { id: 2, name: "Lasalgaon APMC (Asia's Largest Onion Market)", district: "Nashik", state: "Maharashtra", lat: 20.1472, lon: 74.2257 },
-        { id: 3, name: "Pimpalgaon APMC Market", district: "Nashik", state: "Maharashtra", lat: 20.1700, lon: 73.9800 }
+        {
+          id: 1,
+          name: "Nashik Main APMC Market Yard",
+          district: "Nashik",
+          state: "Maharashtra",
+          location: "Dindori Road, Panchavati, Nashik, Maharashtra - 422003 (Near Mumbai-Agra Highway Bypass)",
+          address: "Dindori Road, Panchavati, Nashik, Maharashtra - 422003",
+          active_counters: 6,
+          distance_km: 4.2,
+          operating_hours: "06:00 AM - 08:00 PM",
+          facilities: ["Weighbridge Bay B", "Computer Vision Inspection", "Instant DBT Counter"],
+          lat: 19.9975,
+          lon: 73.7898
+        },
+        {
+          id: 2,
+          name: "Lasalgaon APMC (Asia's Largest Onion Market)",
+          district: "Nashik",
+          state: "Maharashtra",
+          location: "Station Road, Lasalgaon, Niphad Taluka, Nashik Dist, Maharashtra - 422306",
+          address: "Station Road, Lasalgaon, Niphad Taluka, Nashik Dist, Maharashtra - 422306",
+          active_counters: 8,
+          distance_km: 48.5,
+          operating_hours: "05:00 AM - 09:00 PM",
+          facilities: ["Dedicated Onion Yard", "Heavy Truck Ingress Bay", "Cold Chain Buffer"],
+          lat: 20.1472,
+          lon: 74.2257
+        },
+        {
+          id: 3,
+          name: "Pimpalgaon APMC Market Yard",
+          district: "Nashik",
+          state: "Maharashtra",
+          location: "National Highway 3, Pimpalgaon Baswant, Niphad, Nashik, Maharashtra - 422209",
+          address: "National Highway 3, Pimpalgaon Baswant, Niphad, Nashik, Maharashtra - 422209",
+          active_counters: 5,
+          distance_km: 28.0,
+          operating_hours: "06:00 AM - 07:00 PM",
+          facilities: ["Tomato & Grain Bay", "Automated Moisture Assay", "Direct Sourcing Yard"],
+          lat: 20.1700,
+          lon: 73.9800
+        }
       ];
     });
   },
@@ -763,13 +802,54 @@ export const api = {
   getCenterSlots: async (centerId) => {
     return safeFetch(`${API_BASE}/procurement/center/${centerId}/slots`, {}, () => {
       return [
-        { id: 1, center_id: centerId, time_slot: "08:00 AM - 10:00 AM", max_capacity: 50, booked_count: 18, is_available: true },
-        { id: 2, center_id: centerId, time_slot: "10:00 AM - 12:00 PM", max_capacity: 50, booked_count: 35, is_available: true },
-        { id: 3, center_id: centerId, time_slot: "12:00 PM - 02:00 PM", max_capacity: 50, booked_count: 22, is_available: true },
-        { id: 4, center_id: centerId, time_slot: "02:00 PM - 04:00 PM", max_capacity: 50, booked_count: 14, is_available: true }
+        {
+          id: 1,
+          center_id: centerId,
+          time_slot: "08:00 AM - 10:00 AM",
+          max_capacity: 50,
+          booked_count: 18,
+          available_tokens: 32,
+          tokens_left: 32,
+          status_tag: "⚡ Fast-Track Entry",
+          is_available: true
+        },
+        {
+          id: 2,
+          center_id: centerId,
+          time_slot: "10:00 AM - 12:00 PM",
+          max_capacity: 50,
+          booked_count: 35,
+          available_tokens: 15,
+          tokens_left: 15,
+          status_tag: "🔥 High Demand",
+          is_available: true
+        },
+        {
+          id: 3,
+          center_id: centerId,
+          time_slot: "12:00 PM - 02:00 PM",
+          max_capacity: 50,
+          booked_count: 22,
+          available_tokens: 28,
+          tokens_left: 28,
+          status_tag: "🟢 Optimal Flow",
+          is_available: true
+        },
+        {
+          id: 4,
+          center_id: centerId,
+          time_slot: "02:00 PM - 04:00 PM",
+          max_capacity: 50,
+          booked_count: 14,
+          available_tokens: 36,
+          tokens_left: 36,
+          status_tag: "🟢 High Availability",
+          is_available: true
+        }
       ];
     });
   },
+
 
   bookToken: async (data) => {
     return safeFetch(`${API_BASE}/procurement/book-token`, {

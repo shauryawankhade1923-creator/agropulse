@@ -99,48 +99,65 @@ export default function SlotBookingModal({ isOpen, onClose, produce, onTokenIssu
 
         {/* Selected Produce Banner */}
         {produce && (
-          <div className="bg-slate-950 border border-slate-800 rounded-lg p-3 flex items-center justify-between text-xs font-mono">
+          <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between text-xs font-mono">
             <div>
-              <span className="text-slate-500 font-sans block">Lot:</span>
-              <strong className="text-white text-sm font-sans font-medium">
-                #{produce.id} - {produce.crop_name} ({produce.quantity_kg} kg)
+              <span className="text-slate-500 font-sans block text-[11px]">Selected Produce Lot:</span>
+              <strong className="text-white text-sm font-sans font-bold">
+                #{produce.id} - {produce.crop_name || 'Crop Lot'} ({(produce.quantity_kg || produce.total_quantity || 1000).toLocaleString('en-IN')} kg)
               </strong>
             </div>
-            <span className="px-2 py-0.5 rounded bg-slate-900 text-slate-300 border border-slate-800 font-sans text-[11px]">
-              Grade {produce.quality_grade}
+            <span className="px-2.5 py-1 rounded-lg bg-emerald-950/80 text-emerald-300 border border-emerald-800 font-sans text-xs font-semibold">
+              ✓ Certified Grade {produce.quality_grade || 'A'}
             </span>
           </div>
         )}
 
         {/* Step 1: Select Center */}
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-            1. Select Procurement Center
+        <div className="space-y-2">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+            1. Select Procurement Center & Weighbridge Yard
           </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-1 gap-2.5">
             {centers.map((c) => (
               <button
                 key={c.id}
                 type="button"
                 onClick={() => setSelectedCenter(c)}
-                className={`p-3 rounded-lg border text-left text-xs transition ${
+                className={`p-4 rounded-xl border text-left text-xs transition cursor-pointer ${
                   selectedCenter?.id === c.id
-                    ? 'bg-slate-800 border-slate-600 text-white shadow-sm'
-                    : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-850'
+                    ? 'bg-gradient-to-r from-slate-900 to-emerald-950/30 border-emerald-500 ring-1 ring-emerald-500/40 text-white shadow-md'
+                    : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-900/80 hover:border-slate-700'
                 }`}
               >
-                <div className="flex items-start justify-between">
-                  <strong className="font-semibold text-slate-100">{c.name}</strong>
-                  {selectedCenter?.id === c.id && <Check className="w-4 h-4 text-emerald-400 shrink-0" />}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-1">
+                    <strong className="font-bold text-sm text-white block">{c.name}</strong>
+                    <div className="text-[11px] text-slate-300 flex items-start space-x-1.5 pt-0.5">
+                      <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                      <span className="leading-tight">{c.location || c.address || `${c.district}, ${c.state}`}</span>
+                    </div>
+                  </div>
+                  {selectedCenter?.id === c.id ? (
+                    <div className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center shrink-0">
+                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    </div>
+                  ) : (
+                    <div className="w-5 h-5 rounded-full border border-slate-700 shrink-0" />
+                  )}
                 </div>
-                <div className="text-[11px] text-slate-500 mt-1 flex items-center space-x-1">
-                  <MapPin className="w-3 h-3" />
-                  <span className="truncate">{c.location}</span>
-                </div>
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-855 text-[10px] text-slate-500">
-                  <span>{c.active_counters} Active Counters</span>
-                  <span className="text-slate-300 font-mono">
-                    ~{c.distance_km} km
+
+                <div className="flex flex-wrap items-center justify-between mt-3 pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-400 gap-2">
+                  <div className="flex items-center space-x-2">
+                    <span className="px-2 py-0.5 rounded bg-slate-900 text-emerald-400 font-mono font-semibold border border-slate-800">
+                      🏛️ {c.active_counters || 6} Active Weighbridge Bays
+                    </span>
+                    <span className="text-slate-500 hidden sm:inline">•</span>
+                    <span className="text-slate-400 font-sans hidden sm:inline">
+                      🕒 {c.operating_hours || '06:00 AM - 08:00 PM'}
+                    </span>
+                  </div>
+                  <span className="text-emerald-400 font-mono font-bold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60">
+                    📍 ~{c.distance_km || 4.2} km away
                   </span>
                 </div>
               </button>
@@ -149,37 +166,62 @@ export default function SlotBookingModal({ isOpen, onClose, produce, onTokenIssu
         </div>
 
         {/* Step 2: Select Slot */}
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2 flex items-center justify-between">
-            <span>2. Choose Arrival Window</span>
-            <span className="text-[11px] text-slate-500 font-normal font-sans">
-              Today: {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+        <div className="space-y-2">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center justify-between">
+            <span>2. Choose Arrival Window & E-Pass Slot</span>
+            <span className="text-[11px] text-emerald-400 font-mono font-semibold">
+              Today: {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
             </span>
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {slots.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                disabled={s.available_tokens === 0}
-                onClick={() => setSelectedSlot(s)}
-                className={`p-2.5 rounded-lg border text-center text-xs transition ${
-                  selectedSlot?.id === s.id
-                    ? 'bg-slate-800 border-slate-600 text-white font-medium'
-                    : (s.available_tokens === 0 
-                        ? 'opacity-40 bg-slate-950 border-slate-850 cursor-not-allowed'
-                        : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-850')
-                }`}
-              >
-                <Clock className="w-3.5 h-3.5 mx-auto mb-1 text-slate-500" />
-                <span className="font-semibold block text-[11px]">{s.time_slot}</span>
-                <span className="text-[10px] block mt-1 font-mono text-slate-400">
-                  {s.available_tokens} left
-                </span>
-              </button>
-            ))}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            {slots.map((s) => {
+              const tokensLeft = s.available_tokens ?? s.tokens_left ?? (s.max_capacity - s.booked_count) ?? 30;
+              const isSelected = selectedSlot?.id === s.id;
+              const isFull = tokensLeft === 0;
+
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  disabled={isFull}
+                  onClick={() => setSelectedSlot(s)}
+                  className={`p-3 rounded-xl border text-center text-xs transition cursor-pointer flex flex-col justify-between ${
+                    isSelected
+                      ? 'bg-slate-900 border-emerald-500 ring-1 ring-emerald-500/40 text-white font-medium shadow-md'
+                      : (isFull 
+                          ? 'opacity-40 bg-slate-950 border-slate-850 cursor-not-allowed'
+                          : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-900 hover:border-slate-700')
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-center space-x-1 mb-1">
+                      <Clock className={`w-3.5 h-3.5 ${isSelected ? 'text-emerald-400' : 'text-slate-500'}`} />
+                      <span className="font-bold text-[11px] text-white">{s.time_slot}</span>
+                    </div>
+
+                    <div className="text-xs font-bold font-mono text-emerald-400 mt-1.5">
+                      {tokensLeft} tokens left
+                    </div>
+                    <span className="text-[10px] text-slate-500 block font-mono">
+                      (of {s.max_capacity || 50} passes)
+                    </span>
+                  </div>
+
+                  <div className="mt-2 pt-1.5 border-t border-slate-800/60">
+                    <span className={`inline-block px-2 py-0.5 rounded text-[9px] font-bold ${
+                      tokensLeft < 20 
+                        ? 'bg-amber-950 text-amber-300 border border-amber-800/80 animate-pulse'
+                        : 'bg-slate-900 text-cyan-300 border border-slate-800'
+                    }`}>
+                      {s.status_tag || (tokensLeft < 20 ? '🔥 High Demand' : '⚡ Fast-Track')}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
+
 
         {/* Submit Actions */}
         <div className="flex space-x-3 pt-2">
