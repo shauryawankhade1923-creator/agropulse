@@ -277,10 +277,17 @@ export default function VisionQualityScannerModal({
   const handleRunSampleScan = (sampleKey) => {
     setSelectedSampleKey(sampleKey);
     const sample = samples.find(s => s.key === sampleKey);
-    const sampleCrop = sample ? sample.crop_name : 'Auto-Detect';
-    setCustomImageBase64(null);
-    runScanAnalysis({ sample_key: sampleKey, crop_name: sampleCrop, auto_detect_produce: true });
+    const sampleCrop = sample ? sample.crop_name : 'Tomato';
+    const sampleImg = sample ? sample.sample_image : null;
+    setCustomImageBase64(sampleImg);
+    runScanAnalysis({ 
+      sample_key: sampleKey, 
+      crop_name: sampleCrop, 
+      image_base64: sampleImg,
+      auto_detect_produce: false 
+    });
   };
+
 
   const handleApply = () => {
     if (!scanResult) return;

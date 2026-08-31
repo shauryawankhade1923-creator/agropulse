@@ -1707,24 +1707,40 @@ export const api = {
 
   getSampleSpecimens: async () => {
     return safeFetch(`${API_BASE}/ai/sample-specimens`, {}, () => {
+      const createSvgUri = (bg, emoji, label, sub) => `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${encodeURIComponent(bg[0])}"/><stop offset="100%" stop-color="${encodeURIComponent(bg[1])}"/></linearGradient></defs><rect width="400" height="400" rx="28" fill="url(%23g)"/><text x="200" y="210" font-size="120" text-anchor="middle" dominant-baseline="middle">${encodeURIComponent(emoji)}</text><rect x="30" y="315" width="340" height="60" rx="14" fill="%230f172a" fill-opacity="0.85" stroke="%23334155" stroke-width="2"/><text x="200" y="342" font-family="system-ui,sans-serif" font-weight="bold" font-size="16" fill="%23ffffff" text-anchor="middle">${encodeURIComponent(label)}</text><text x="200" y="362" font-family="system-ui,sans-serif" font-weight="bold" font-size="11" fill="%2334d399" text-anchor="middle">${encodeURIComponent(sub)}</text></svg>`;
+
       return [
         {
           key: "tomato_grade_a",
           crop_name: "Tomato",
-          fruit_category: "VEGETABLE",
+          fruit_category: "SOLANACEOUS VEGETABLE",
           title: "Tomato (Abhinav Hybrid)",
           thumbnail_icon: "🍅",
+          sample_image: createSvgUri(['#7f1d1d', '#991b1b'], '🍅', 'Abhinav Hybrid Tomato', 'AGMARK Special Grade A (97.4%)'),
           variety: "Abhinav Hybrid",
           expected_grade: "A",
           score: 97,
           description: "Smooth taut skin, uniform crimson red coloring, high firmness, 0.4% minor blemishes."
         },
         {
+          key: "banana_grade_a",
+          crop_name: "Banana",
+          fruit_category: "TROPICAL MUSACEAE FRUIT",
+          title: "Banana (Grand Naine G9)",
+          thumbnail_icon: "🍌",
+          sample_image: createSvgUri(['#78350f', '#a16207'], '🍌', 'Grand Naine G9 Banana', 'AGMARK Super Grade A (95.9%)'),
+          variety: "Grand Naine G9",
+          expected_grade: "A",
+          score: 96,
+          description: "Clean crown cut, unblemished finger length > 18cm, optimum yellow index."
+        },
+        {
           key: "onion_grade_a",
           crop_name: "Onion",
-          fruit_category: "VEGETABLE",
+          fruit_category: "BULB ALLIUM VEGETABLE",
           title: "Onion (Nashik Red Garwa)",
           thumbnail_icon: "🧅",
+          sample_image: createSvgUri(['#581c87', '#701a75'], '🧅', 'Nashik Red Garwa Onion', 'AGMARK Extra Special Grade A (98.2%)'),
           variety: "Nashik Red Garwa",
           expected_grade: "A",
           score: 98,
@@ -1733,31 +1749,22 @@ export const api = {
         {
           key: "apple_grade_a",
           crop_name: "Apple",
-          fruit_category: "FRUIT",
+          fruit_category: "POMACEOUS FRUIT",
           title: "Apple (Himachal Royal Gala)",
           thumbnail_icon: "🍎",
+          sample_image: createSvgUri(['#881337', '#9f1239'], '🍎', 'Himachal Royal Gala Apple', 'AGMARK Grade A Premium (96.8%)'),
           variety: "Himachal Royal Gala",
           expected_grade: "A",
           score: 97,
           description: "Vibrant deep red striping over 85% surface, high crispness density, zero bruising."
         },
         {
-          key: "banana_grade_a",
-          crop_name: "Banana",
-          fruit_category: "FRUIT",
-          title: "Banana (Grand Naine G9)",
-          thumbnail_icon: "🍌",
-          variety: "Grand Naine G9",
-          expected_grade: "A",
-          score: 96,
-          description: "Clean crown cut, unblemished finger length > 18cm, optimum yellow index."
-        },
-        {
           key: "mango_grade_a",
           crop_name: "Mango",
-          fruit_category: "FRUIT",
+          fruit_category: "TROPICAL DRUPE FRUIT",
           title: "Mango (Ratnagiri Alphonso)",
           thumbnail_icon: "🥭",
+          sample_image: createSvgUri(['#7c2d12', '#c2410c'], '🥭', 'Ratnagiri Alphonso Mango', 'AGMARK GI Export Grade A (99.1%)'),
           variety: "Ratnagiri Alphonso",
           expected_grade: "A",
           score: 99,
@@ -1766,17 +1773,43 @@ export const api = {
         {
           key: "potato_grade_b",
           crop_name: "Potato",
-          fruit_category: "VEGETABLE",
+          fruit_category: "TUBER VEGETABLE",
           title: "Potato (Kufri Jyoti)",
           thumbnail_icon: "🥔",
+          sample_image: createSvgUri(['#451a03', '#713f12'], '🥔', 'Kufri Jyoti Potato', 'AGMARK Standard Grade B (89.5%)'),
           variety: "Kufri Jyoti",
           expected_grade: "B",
           score: 89,
           description: "Firm table skin set, shallow eyes, zero solanine greening, slight surface earth."
+        },
+        {
+          key: "orange_grade_a",
+          crop_name: "Orange",
+          fruit_category: "CITRUS FRUIT",
+          title: "Orange (Nagpur Mandarin)",
+          thumbnail_icon: "🍊",
+          sample_image: createSvgUri(['#7c2d12', '#ea580c'], '🍊', 'Nagpur Mandarin Citrus', 'AGMARK Grade A Juicy (97.8%)'),
+          variety: "Nagpur Mandarin",
+          expected_grade: "A",
+          score: 98,
+          description: "Deep saffron-orange pebbled peel, high juice sac density, tight rinds, zero blemishes."
+        },
+        {
+          key: "corn_grade_a",
+          crop_name: "Corn",
+          fruit_category: "CEREAL GRAIN",
+          title: "Sweet Corn (Golden Kernel)",
+          thumbnail_icon: "🌽",
+          sample_image: createSvgUri(['#713f12', '#ca8a04'], '🌽', 'Golden Sweet Corn', 'AGMARK Grade A Kernels (96.2%)'),
+          variety: "Sweet Corn",
+          expected_grade: "A",
+          score: 96,
+          description: "Tightly packed uniform golden kernels, moist silk, zero earworm damage, optimal sweetness."
         }
       ];
     });
   },
+
 
 
 
