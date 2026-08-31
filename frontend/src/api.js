@@ -1178,14 +1178,34 @@ export const api = {
       body: JSON.stringify(payload),
     }, () => {
       return {
-        detected_truck_count: 3,
-        detected_tractor_count: 2,
-        detected_small_vehicles: 1,
-        total_vehicle_density: 6,
-        queue_status: "MODERATE_FLOW",
-        estimated_bay_clearance_minutes: 18,
-        recommended_gate_action: "DISPATCH_TO_COUNTER_2",
-        confidence_score: 95.8
+        congestion_color_hex: "#3b82f6",
+        congestion_label: "OPTIMAL FLOW",
+        queue_density_percentage: 42,
+        total_vehicles_detected: 6,
+        estimated_wait_minutes: 12,
+        queue_length_meters: 48,
+        entity_breakdown: {
+          tractors: 2,
+          heavy_trucks: 3,
+          pickup_tempos: 1,
+          farmers_pedestrians: 4
+        },
+        bounding_boxes: [
+          { label: "Heavy Truck (10T)", confidence: 0.98, box: [120, 80, 240, 210], color: "#3b82f6" },
+          { label: "Mahindra Tractor", confidence: 0.96, box: [280, 110, 180, 160], color: "#10b981" },
+          { label: "Pickup Tempo", confidence: 0.94, box: [480, 130, 140, 130], color: "#f59e0b" }
+        ],
+        active_counters_status: [
+          { counter_id: 1, counter_name: "Bay #1 (Heavy)", status: "OPTIMAL", queue_count: 2, wait_min: 10 },
+          { counter_id: 2, counter_name: "Bay #2 (General)", status: "LOW_LOAD", queue_count: 1, wait_min: 5 },
+          { counter_id: 3, counter_name: "Bay #3 (Express)", status: "IDLE", queue_count: 0, wait_min: 0 },
+          { counter_id: 4, counter_name: "Bay #4 (Grain)", status: "OPTIMAL", queue_count: 3, wait_min: 14 }
+        ],
+        ai_recommendations: [
+          "Divert incoming light pickup tempos to Bay #3 (Express) to prevent bottleneck at Gate Ingress #1.",
+          "Weighbridge #2 is currently running at 94% efficiency with 5 min average clearance."
+        ],
+        gate_audio_announcement: "Gate Ingress Alert: Light pickup vehicles please proceed to Weighbridge Bay 3 for immediate check-in."
       };
     });
   },
@@ -1193,9 +1213,11 @@ export const api = {
   getCCTVQueueSamples: async () => {
     return safeFetch(`${API_BASE}/ai/cctv-queue-samples`, {}, () => {
       return [
-        { id: "cam-01", name: "Nashik Main Gate Entry Bay #1", live_fps: 24, density: "OPTIMAL" },
-        { id: "cam-02", name: "Weighbridge #2 Ingress Camera", live_fps: 30, density: "MODERATE" }
+        { key: "nashik_morning_rush", name: "Nashik Main Gate Entry Bay #1", live_fps: 24, density: "OPTIMAL", sample_url: "/cctv/sample_gate_1.jpg" },
+        { key: "lasalgaon_peak", name: "Lasalgaon Weighbridge #2 Ingress", live_fps: 30, density: "MODERATE", sample_url: "/cctv/sample_gate_2.jpg" },
+        { key: "pimpalgaon_noon", name: "Pimpalgaon APMC Yard Entrance", live_fps: 25, density: "LIGHT", sample_url: "/cctv/sample_gate_3.jpg" }
       ];
     });
   }
 };
+
