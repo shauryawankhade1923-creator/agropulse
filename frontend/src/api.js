@@ -1605,6 +1605,70 @@ export const api = {
           agmark_summary: "AGMARK Grade B Standard Quality",
           reasoning: "Sound skin texture, shallow eyes, zero solanine greening, slight surface soil adhering (within standard 1.5% tolerance).",
           scores: { surface_integrity: 91, color_uniformity: 88, size_conformity: 90, size_consistency: 90, skin_blemish_ratio: 2.2 }
+        },
+        Orange: {
+          fruit: "Orange",
+          variety: "Nagpur Mandarin (Citrus)",
+          icon: "🍊",
+          category: "CITRUS FRUIT",
+          grade: "A",
+          score: 97.8,
+          confidence: 98.9,
+          ripeness: "Juicy Table Ripe (High Brix 11.8°)",
+          moisture: 12.4,
+          multiplier: 1.15,
+          adjustment_pct: 15,
+          agmark_summary: "AGMARK Grade A Juicy Nagpur Citrus",
+          reasoning: "Deep saffron-orange pebbled peel, high juice sac density, tight rinds, zero puncture wounds.",
+          scores: { surface_integrity: 98, color_uniformity: 97, size_conformity: 96, size_consistency: 96, skin_blemish_ratio: 0.3 }
+        },
+        Pomegranate: {
+          fruit: "Pomegranate",
+          variety: "Bhagwa Ruby (Solapur)",
+          icon: "🍇",
+          category: "ARIL FRUIT",
+          grade: "A",
+          score: 98.5,
+          confidence: 99.2,
+          ripeness: "Deep Crimson Arils (15.5° Brix)",
+          moisture: 11.2,
+          multiplier: 1.18,
+          adjustment_pct: 18,
+          agmark_summary: "AGMARK Special Grade • Ruby Arils",
+          reasoning: "Glossy deep red leathery rind, heavy specific gravity, zero thrip scarring, sweet soft seeds.",
+          scores: { surface_integrity: 99, color_uniformity: 98, size_conformity: 97, size_consistency: 97, skin_blemish_ratio: 0.2 }
+        },
+        Corn: {
+          fruit: "Corn",
+          variety: "Sweet Corn / Maize",
+          icon: "🌽",
+          category: "CEREAL GRAIN",
+          grade: "A",
+          score: 96.2,
+          confidence: 97.5,
+          ripeness: "Milky Kernel Stage",
+          moisture: 14.0,
+          multiplier: 1.08,
+          adjustment_pct: 8,
+          agmark_summary: "AGMARK Grade A Sweet Kernels",
+          reasoning: "Tightly packed uniform golden kernels, moist silk, zero earworm damage, optimal sweetness.",
+          scores: { surface_integrity: 97, color_uniformity: 95, size_conformity: 96, size_consistency: 96, skin_blemish_ratio: 0.6 }
+        },
+        Wheat: {
+          fruit: "Wheat",
+          variety: "Sharbati Gold (Madhya Pradesh / Maharashtra)",
+          icon: "🌾",
+          category: "CEREAL GRAIN",
+          grade: "A",
+          score: 98.0,
+          confidence: 98.8,
+          ripeness: "Hard Amber Lustrous Kernels",
+          moisture: 10.2,
+          multiplier: 1.12,
+          adjustment_pct: 12,
+          agmark_summary: "AGMARK Grade 1 Sharbati Milling Wheat",
+          reasoning: "Lustrous heavy golden grains, 100% sound grain ratio, zero weevil infestation, high protein test.",
+          scores: { surface_integrity: 99, color_uniformity: 97, size_conformity: 98, size_consistency: 98, skin_blemish_ratio: 0.1 }
         }
       };
 
@@ -1638,6 +1702,7 @@ export const api = {
         detected_defects: []
       };
     });
+
   },
 
   getSampleSpecimens: async () => {

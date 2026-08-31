@@ -101,7 +101,69 @@ export default function VisionQualityScannerModal({
     setIsCameraActive(false);
   };
 
-  const captureCameraFrame = () => {
+  const analyzeImageColorSpectrum = (imageSrc) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = 48;
+          canvas.height = 48;
+          ctx.drawImage(img, 0, 0, 48, 48);
+          const imgData = ctx.getImageData(0, 0, 48, 48).data;
+          
+          let redWeight = 0, yellowWeight = 0, orangeWeight = 0, purpleWeight = 0, brownWeight = 0;
+
+          for (let i = 0; i < imgData.length; i += 4) {
+            const r = imgData[i];
+            const g = imgData[i+1];
+            const b = imgData[i+2];
+            const a = imgData[i+3];
+            if (a < 60) continue;
+
+            if (r > 130 && r > g * 1.25 && r > b * 1.25) {
+              redWeight += 2; // Strong Red -> Tomato / Apple
+            } else if (r > 140 && g > 130 && b < 100) {
+              yellowWeight += 2; // Yellow -> Banana / Corn
+            } else if (r > 160 && g > 90 && g < 150 && b < 70) {
+              orangeWeight += 2; // Orange -> Mango / Orange
+            } else if (r > 110 && b > 80 && g < r * 0.9) {
+              purpleWeight += 2; // Purple / Magenta -> Onion
+            } else if (r > 100 && g > 80 && b > 60 && Math.abs(r - g) < 45 && Math.abs(g - b) < 45) {
+              brownWeight += 1; // Brown / Earthy -> Potato
+            }
+          }
+
+          let detected = "Tomato";
+          const maxScore = Math.max(redWeight, yellowWeight, orangeWeight, purpleWeight, brownWeight);
+
+          if (maxScore === redWeight || redWeight >= 80) {
+            detected = "Tomato";
+          } else if (maxScore === yellowWeight) {
+            detected = "Banana";
+          } else if (maxScore === orangeWeight) {
+            detected = "Mango";
+          } else if (maxScore === purpleWeight) {
+            detected = "Onion";
+          } else if (maxScore === brownWeight) {
+            detected = "Potato";
+          } else {
+            detected = "Tomato";
+          }
+
+          resolve(detected);
+        } catch (err) {
+          resolve("Tomato");
+        }
+      };
+      img.onerror = () => resolve("Tomato");
+      img.src = imageSrc;
+    });
+  };
+
+  const captureCameraFrame = async () => {
     if (!videoRef.current || !canvasRef.current) return;
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -112,7 +174,8 @@ export default function VisionQualityScannerModal({
     const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
     setCustomImageBase64(dataUrl);
     stopCamera();
-    runScanAnalysis({ image_base64: dataUrl, crop_name: cropName, auto_detect_produce: true });
+    const detectedCrop = await analyzeImageColorSpectrum(dataUrl);
+    runScanAnalysis({ image_base64: dataUrl, crop_name: detectedCrop, auto_detect_produce: true });
   };
 
   const handleFileUpload = (e) => {
@@ -121,9 +184,10 @@ export default function VisionQualityScannerModal({
     setErrorMsg(null);
 
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       setCustomImageBase64(reader.result);
-      runScanAnalysis({ image_base64: reader.result, crop_name: cropName, auto_detect_produce: true });
+      const detectedCrop = await analyzeImageColorSpectrum(reader.result);
+      runScanAnalysis({ image_base64: reader.result, crop_name: detectedCrop, auto_detect_produce: true });
     };
     reader.readAsDataURL(file);
   };
@@ -148,6 +212,7 @@ export default function VisionQualityScannerModal({
       setAnalyzing(false);
     }
   };
+
 
   const handleRunSampleScan = (sampleKey) => {
     setSelectedSampleKey(sampleKey);
@@ -475,6 +540,49 @@ export default function VisionQualityScannerModal({
                   <span className="text-emerald-400 font-bold block">{scanResult.ripeness_stage}</span>
                 </div>
               </div>
+
+              {/* Quick Fruit Switcher Bar */}
+              <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-400 font-medium">Verify or Switch Produce Type:</span>
+                  <span className="text-[10px] text-emerald-400 font-mono">1-Tap AGMARK Re-Grade</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { name: 'Tomato', icon: '🍅' },
+                    { name: 'Onion', icon: '🧅' },
+                    { name: 'Apple', icon: '🍎' },
+                    { name: 'Banana', icon: '🍌' },
+                    { name: 'Mango', icon: '🥭' },
+                    { name: 'Potato', icon: '🥔' },
+                    { name: 'Orange', icon: '🍊' },
+                    { name: 'Corn', icon: '🌽' }
+                  ].map(f => {
+                    const isCurrent = scanResult.detected_fruit_or_crop.toLowerCase() === f.name.toLowerCase();
+                    return (
+                      <button
+                        key={f.name}
+                        type="button"
+                        onClick={() => runScanAnalysis({
+                          image_base64: customImageBase64 || scanResult.analyzed_image_base64,
+                          sample_key: selectedSampleKey,
+                          crop_name: f.name,
+                          auto_detect_produce: false
+                        })}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-medium transition flex items-center space-x-1 cursor-pointer ${
+                          isCurrent
+                            ? 'bg-emerald-600 text-white font-bold shadow-sm'
+                            : 'bg-slate-950 text-slate-300 border border-slate-800 hover:border-slate-700 hover:text-white'
+                        }`}
+                      >
+                        <span>{f.icon}</span>
+                        <span>{f.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
 
               {/* Top Result Banner */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800 pb-4">
